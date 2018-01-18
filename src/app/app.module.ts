@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app.routes';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { Ng2Webstorage } from 'ngx-webstorage';
+import * as solc from 'solc';
 
 import {CdkTableModule} from '@angular/cdk/table';
 

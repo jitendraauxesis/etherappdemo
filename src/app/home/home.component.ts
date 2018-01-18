@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { WelcomeComponent } from '../welcome/welcome.component';
 import { MywebService } from '../service/myweb.service';
 import { MycryptoService } from '../service/mycrypto.service';
@@ -19,13 +19,16 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.mywebService.createAddressAndWallet();
+    
   }
 
+  makeAddress(){
+    this.mywebService.createAddressAndWallet();
+  }
+
+
   openSnackBar() {
-    // this.snackBar.openFromComponent(WelcomeComponent, {
-    //   duration: 1000,
-    // });
+    
 
     this.snackBar.open('Ok Fine MD','Undo',{
       duration:1000
@@ -36,12 +39,16 @@ export class HomeComponent implements OnInit {
     this.mycryptoService.clearStorage();
   }
 
-  makeAddress(){
-    this.mywebService.createAddressAndWallet();
-  }
+  
 
   deployContract(){
     this.mywebService.deployContract();
   }
   
+
+  openSnackbar2(){
+    // this.snackBar.openFromComponent(WelcomeComponent, {
+    //   duration: 1000,
+    // });
+  }
 }
