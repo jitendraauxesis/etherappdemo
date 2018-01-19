@@ -28,7 +28,11 @@ router.get('/web3/init',(req,res)=>{
 })
 
 router.get('/web3/contract/compile',(req,res)=>{
-  var contractfile = 'pragma solidity ^0.4.19; contract Hello{ event Print(string out); function() public { Print("Hello solidity"); } }';
+  res.header("Access-Control-Allow-Origin","*");
+  // var contractfile = 'pragma solidity ^0.4.19; contract Hello{event Print(string out); string message; function() public {Print("Hello solidity"); } function printMessage() public returns(string message){message = "Hi this is remix ide"; return string(message); } function myFunction() returns(uint256 myNumber, string myString) {return (23456,"Hello!%"); } }';
+  var contractfile = 'pragma solidity ^0.4.19; contract Employee {string name; string designation; function setEmployeeDetail(string _name,string _designation) public{name = _name; designation = _designation; } function getEmployeeDetail() public constant returns(string,string){return (name,designation); } }';
+
+
   //to compile
   var contract = solc.compile(contractfile,1);
 
@@ -45,7 +49,10 @@ router.get('/web3/contract/compile',(req,res)=>{
 
   var response = {
     status:'ok',
-    contract:jsonTemp
+    // contract:jsonTemp,
+    bytecode:jsonTemp[0].bytecode,
+    interface:jsonTemp[0].interface,
+    contract:contract
   }
 
   res.send(response);

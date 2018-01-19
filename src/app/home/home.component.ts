@@ -26,6 +26,19 @@ export class HomeComponent implements OnInit {
     this.mywebService.createAddressAndWallet();
   }
 
+  fetchContract(){
+    this.mywebService.returnCompiledContract()
+    .then(
+      d=>{ //or here
+        console.log(d)
+      },
+      e=>{
+        console.log(e)
+      }
+    )
+  }
+
+
 
   openSnackBar() {
     

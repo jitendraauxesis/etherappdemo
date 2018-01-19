@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpModule, Http  } from '@angular/http';
 import 'rxjs/add/operator/map';
 
-import * as Web3 from 'web3';
+import Web3 from 'web3';
 import *  as ethers from 'ethers';
 import * as Tx from 'ethereumjs-tx';
 import * as solc from 'solc';
@@ -41,6 +41,92 @@ export class MywebService {
     console.log("Wallet address",address)
   }
 
+  returnCompiledContract(){
+    return new Promise((resolve,reject)=>{
+      
+      this.http.get("http://localhost:3000/api/web3/contract/compile")
+      .map(res=>res)
+      .subscribe(
+        
+        d=>{
+          let dt = JSON.parse(JSON.stringify(d));
+          let body = JSON.parse(dt._body);
+
+          var number = this.web3.eth.getCompilers();
+          console.log(number);
+
+          // this.web3.eth.getAccounts().then(
+          //   dd=>{
+              let acc = "0x692a70d2e424a56d2c6c27aa97d1a86395877b3a"; 
+              let abi = body.interface;
+              let bytecode = body.bytecode;
+              console.log("maincontract",body.contract);
+
+              var contract = new this.web3.eth.Contract(abi);
+ 
+              var contractData = contract.deploy({
+                method:'constructor',
+                data:'0x'+bytecode
+              }).encodeABI();
+
+              console.log(contract)
+              console.info(contract.options.address);
+
+              // let msg = '';
+              // contract.methods.setEmployeeDetail("Abcd","efgh");
+              // contract.methods.getEmployeeDetail().call()
+              // .then(
+              //   d=>{console.log(d)},
+              //   e=>{console.log(e)}
+              // )
+              // .catch(e => console.log(e));
+              // contract.methods.printMessage().call({},function(error,result){
+              //   console.log(error)
+              //   console.log(result)
+              // })
+              // .then(
+              //   res=>{
+              //     console.log(res)
+              //   }
+              // )
+              // console.log("conttract msg");
+              // console.log(msg)
+
+              var resp = {
+                status:"ok",
+                contractData:contractData
+              }
+              resolve(resp)
+            // },
+            // ee=>{
+            //   console.log(ee);
+            // }
+          // );
+
+          
+
+          
+
+
+        },
+        e=>reject(e)
+      );
+
+    })
+  }
+
+  acc():string{
+    let acc;
+    return this.web3.eth.getAccounts().then(
+      dd=>{
+        acc = dd[0];
+        return acc;
+      },
+      ee=>{
+        return ee;
+      }
+    );
+  }
  
   rng () { return Buffer.Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz') }//http://127.0.0.1:8008http://139.59.213.205:7007
 
