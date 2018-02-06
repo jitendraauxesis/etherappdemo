@@ -3,25 +3,55 @@ import { NgModule } from '@angular/core';
 
 import { HomeComponent } from './home/home.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { NavbarComponent } from './layout/navbar/navbar.component';
+import { UserhomeComponent } from './userhome/userhome.component';
+import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
 
 const routes:Routes = [
+    /**
+     * CAS urls
+     */
     {
         path: "",
-        component: HomeComponent,
+        component: UserhomeComponent,
         pathMatch: "full"
     },
     {
         path: "home",
-        component: HomeComponent
+        component: UserhomeComponent
     },
     {
         path: "welcome",
         component: WelcomeComponent
     },
     {
+        path: "csv/detail",
+        component: UserhomecsvdetailComponent
+    },
+    {
         path: "**",
-        component: HomeComponent
+        component: UserhomeComponent
     }
+    /**
+     * Old urls
+     */
+    // {
+    //     path: "",
+    //     component: HomeComponent,
+    //     pathMatch: "full"
+    // },
+    // {
+    //     path: "home",
+    //     component: HomeComponent
+    // },
+    // {
+    //     path: "welcome",
+    //     component: WelcomeComponent
+    // },
+    // {
+    //     path: "**",
+    //     component: HomeComponent
+    // }
 ];
 
 @NgModule({

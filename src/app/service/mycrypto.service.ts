@@ -17,7 +17,8 @@ export class MycryptoService {
   InitKeySet(){
     let chk = this.InitKeyGet();
     if( chk == "" || chk == undefined || chk == null){
-      let key = "This is just a demo";
+      console.log("im in")
+      let key = "This is just a demo"; 
       let val = sha256(key);
       this.localStorageService.store("SISKeystore",val);
     }
@@ -58,4 +59,21 @@ export class MycryptoService {
     return val;
   }
 
+  saveToLocalURL(name,s){
+    let key = "This is a url";
+    let str = (CryptJS.AES.encrypt(s,key)).toString();
+    this.localStorageService.store(name,str);
+  }
+
+  retrieveFromLocalURL(name):String{
+    let key = "This is a url";
+    let fromStore = this.localStorageService.retrieve(name);
+    if( fromStore == "" || fromStore == null || fromStore == undefined ){
+      return "";
+    }else{
+      let decrypt = CryptJS.AES.decrypt(fromStore,key);
+      let str = decrypt.toString(CryptJS.enc.Utf8);
+      return str;
+    }
+  }
 }

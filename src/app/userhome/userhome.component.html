@@ -1,0 +1,21 @@
+<app-navbar></app-navbar>
+<mat-divider></mat-divider>
+<ngx-loading [show]="ngxloading"></ngx-loading>
+<form [formGroup]="uploadForm"  (ngSubmit)="uploadcsv()">
+<mat-card>
+  <mat-card-title>Upload Your File</mat-card-title>
+  <mat-card-subtitle>You need to only upload .csv file</mat-card-subtitle>
+  <mat-card-content>
+    <img src="assets/lib/image/upload.png" class="uploadimage" style="cursor:pointer;" (click)="csvfile.click()">
+    <br>
+    OR
+    <br>
+    <input type="file" accept=".csv" id="ufile" name="ufile" (change)="fileChangeListener($event)" #csvfile>
+  </mat-card-content>
+  <mat-card-actions>
+    <button class="uploadbtn" mat-raised-button>
+        Upload&nbsp;&nbsp;<mat-icon>cloud</mat-icon> 
+    </button> 
+  </mat-card-actions>
+</mat-card>
+</form>

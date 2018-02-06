@@ -1,0 +1,26 @@
+/* mat-dialog-actions div div.hortbtns {
+    bottom: 0;
+    width: 100%;
+    float: right;
+    text-align: end;
+} */
+
+.table-responsive.divtable {
+    width: 100%;
+    display: block;
+}
+
+.table-responsive.divtable table tbody tr th {
+    text-align: start;
+}
+
+.table-responsive.divtable table tbody tr td {
+    text-align: end;
+}
+
+mat-dialog-actions .hortbtns {
+    float: right;
+    right: 0;
+    width: 100%;
+    text-align: end;
+}

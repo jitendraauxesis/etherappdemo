@@ -1,0 +1,20 @@
+mat-card-title,mat-card-subtitle,mat-card-content,mat-card-actions{
+    text-align: center;
+}
+
+img.uploadimage {
+    width: 40%;
+}
+
+mat-card.mat-card {
+    padding: 4%;
+    margin-right: 10%;
+    margin-left: 10%;
+    margin-bottom: 4%;
+    margin-top:2%;
+}
+
+.uploadbtn{
+    background-color: #3f51b5;
+    color: #fff
+}

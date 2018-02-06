@@ -29,6 +29,7 @@ export class MywebService {
         this.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8008"));
     }
     console.log("this.web3",this.web3);
+    // console.log(Buffer)
   }
 
   createAddressAndWallet(){
@@ -39,6 +40,7 @@ export class MywebService {
     console.log(wallet)
     let address = wallet.address;
     console.log("Wallet address",address)
+
   }
 
   returnCompiledContract(){
@@ -174,7 +176,7 @@ export class MywebService {
       e=>{
         console.error(e)
       }
-    )
+    ) 
   }
 
   readContract(){
@@ -337,5 +339,8 @@ export class MywebService {
       }
     })
   }
+
+
+  
 
 }

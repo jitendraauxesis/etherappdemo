@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MycryptoService } from './service/mycrypto.service';
+import bluebird from 'bluebird';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,17 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+
+  constructor(
+    public mycryptoService:MycryptoService,
+  ){
+    bluebird.config({
+        warnings: false
+    });
+  }
+  ngOnInit(){
+    this.mycryptoService.saveToLocalURL("SISNODEURL","http://localhost:3000/");
+    this.mycryptoService.saveToLocalURL("SISWEB3URL","http://139.59.213.205:7007");//"http://139.59.213.205:7007");//"http://127.0.0.1:8008");
+    // console.log(this.mycryptoService.retrieveFromLocalURL("SISNODEURL"),this.mycryptoService.retrieveFromLocalURL("SISWEB3URL"));
+  }
 }

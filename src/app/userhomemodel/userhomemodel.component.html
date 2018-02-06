@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>CAS Tokens Distribution</h2>
+<mat-dialog-content>
+  
+  CSV detail for tokens list
+  <br>
+  <div *ngIf="initialView == 0" class="maindiv">
+    <mat-card class="modelcard">
+        <mat-card-content class="modelcontent">
+            
+            <!-- <mat-list class="modellist">
+              <mat-list-item>
+                <h5 mat-line>{{'Total Transaction Address'}}&nbsp;{{countTXAddresses}}</h5>
+              </mat-list-item>
+              <mat-list-item>
+                  <h5 mat-line>{{'Total CAS Tokens'}}&nbsp;{{totalTXTokens}}</h5>
+              </mat-list-item>
+              <mat-list-item>
+                  <h5 mat-line>{{'Fee'}}&nbsp;{{'0'}}</h5>
+              </mat-list-item>
+              <mat-list-item>
+                  <h5 mat-line>{{'CSV Valid'}}&nbsp;{{totalTXTokens}}</h5>
+              </mat-list-item>
+            </mat-list> -->
+          <div class="table-responsive divtable">
+            <table>
+              <tr>
+                <th>Total Transaction Address:</th>
+                <td>{{countTXAddresses}}</td>
+              </tr>
+              <tr>
+                <th>Total CAS Tokens:</th>
+                <td>{{totalTXTokens}}</td>
+              </tr>
+              <tr>
+                <th>Fee:</th>
+                <td>{{'0'}}</td>
+              </tr>
+              <tr>
+                <th>CSV Valid:</th>
+                <td>
+                    <mat-chip-list><mat-chip color="primary" selected="true">Valid CSV</mat-chip></mat-chip-list>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </mat-card-content>
+    </mat-card>
+    
+  </div>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  
+    <div *ngIf="initialView == 0">
+        <div class="hortbtns">
+          <button mat-button mat-dialog-close>Cancel</button>
+          <!-- <button mat-button [mat-dialog-close]="true">Next</button> -->
+          <button mat-button (click)="next(1)">Next</button>
+        </div>
+    </div>
+    <div *ngIf="initialView == 1">
+        <button mat-button [mat-dialog-close]="true">Submit</button>
+    </div>
+  
+
+</mat-dialog-actions>

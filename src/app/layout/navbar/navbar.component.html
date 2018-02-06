@@ -1,0 +1,15 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    
+    <span>CAS Tokens client</span>
+
+    <button mat-button [matMenuTriggerFor]="menu"><mat-icon>menu</mat-icon> Menu</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="upload()">Upload CSV</button>
+      <button mat-menu-item (click)="csvdetail()">CSV Detail</button>
+    </mat-menu>
+
+
+  </mat-toolbar-row>
+  
+</mat-toolbar>
