@@ -143,53 +143,143 @@ export class CasService {
 
                       let a;
                       
+
+                      this.mycryptoService.saveToLocal("SISContractABI",JSON.stringify(abi));
+                      this.mycryptoService.saveToLocal("SISContractByteCode",bytecode);
+                      this.mycryptoService.saveToLocal("SISContractData",contractData);
+                      
+
+
                       // acc = dd[0];
                       // // console.log("addresses:",acc,dd)
                       // a = acc;
                         
 
                       console.log("contractDAta:",contractData)
-                      var gasLimit = 1302200;
-                      const gasPrice = 1800000000;
-                      const gasPriceHex = this.web3.utils.toHex(gasPrice);
-                      const gasLimitHex = this.web3.utils.toHex(gasLimit);
-                      const nonce = this.web3.eth.getTransactionCount(creating_address);
 
-                      var nonceHex;
-                      nonce.then(
-                        d=>{
-                          console.log(d)
-                          var nonceHex = this.web3.utils.toHex(d);
+                      var gasLimit = this.web3.eth.estimateGas({ 
+                        to: creating_address, // data: '0x' + bytecode, 
+                        data: contractData, // from: wallet.address, 
+                      }).then(
+                        valgas =>{
+                          console.log(valgas)
+                          // console.log(gasLimit)
+                          var gasLimit = 1302200;//1302200;
+                          const gasPrice = this.web3.eth.getGasPrice();//1800000000;
+                          
+                          const nonce = this.web3.eth.getTransactionCount(creating_address);
 
-                          const rawTx = {
-                            nonce: nonceHex,
-                            gasPrice: gasPriceHex,
-                            gasLimit: gasLimitHex,
-                            data: contractData,
-                            from: creating_address
-                          };
+                          var nonceHex;
+                          Promise.all([gasPrice,nonce])
+                          .then(
+                            (d)=>{
+                              // console.log(d)
+
+                              const gasPriceHex = this.web3.utils.toHex(d[0]);
+                              const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
+
+                                  // console.log(d)
+                                  var nonceHex = this.web3.utils.toHex(d[1]);
+
+                                  const rawTx = {
+                                    nonce: nonceHex,
+                                    gasPrice: gasPriceHex,
+                                    gasLimit: gasLimitHex,
+                                    data: contractData,
+                                    from: creating_address
+                                  };
+            
+                                  // console.log("\n\n\n Rawtx:", rawTx);
+
+                                  let calculateFee = valgas*d[0];
+                                  console.log(calculateFee)
+                                  let fromwei = this.web3.utils.fromWei(calculateFee.toString(),'ether');
+                                  // console.log("fromwei",fromwei);
+            
+                                  const tx = new Tx(rawTx);
+                                  // console.log("sadasdsad", tx.serialize().toString('hex'));
+                                  var pk = priv.toString();
+                                  pk = pk.substr(2,pk.length);
+                                  var pk2 = Buffer.Buffer.from(pk,'hex');
+                                  tx.sign(pk2);
+                                  const serializedTx = tx.serialize();
+                                  this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
+                                  .on('receipt', (dd)=>{
+                                    console.log('receipt',dd)
+                  
+                                    this.mycryptoService.saveToLocal("SISContractBlockHash",dd.blockHash);
+                                    this.mycryptoService.saveToLocal("SISContractAddress",dd.contractAddress);
+                                    this.mycryptoService.saveToLocal("SISContractTxHash",dd.transactionHash);
+                                    this.mycryptoService.saveToLocal("SISContractReceiptDetail",JSON.stringify(dd));
+                                    
+                                    // console.log(
+                                    //   this.mycryptoService.retrieveFromLocal("SISContractBlockHash"),
+                                    //   this.mycryptoService.retrieveFromLocal("SISContractAddress"),
+                                    //   this.mycryptoService.retrieveFromLocal("SISContractTxHash"),
+                                    //   this.mycryptoService.retrieveFromLocal("SISContractReceiptDetail")
+                                    // )
+                                    
+                                    resolve(dd)
+                                  })
+                                  .on('error',(ee)=>{
+                                    console.log('error:',ee)
+                                    reject(ee)
+                                  });
+
+                            }
+                          )
+                        } 
+                      );
+
+                      
+
+                      // nonce.then(
+                      //   d=>{
+                      //     console.log(d)
+                      //     var nonceHex = this.web3.utils.toHex(d);
+
+                      //     const rawTx = {
+                      //       nonce: nonceHex,
+                      //       gasPrice: gasPriceHex,
+                      //       gasLimit: gasLimitHex,
+                      //       data: contractData,
+                      //       from: creating_address
+                      //     };
     
-                          console.log("\n\n\n Rawtx:", rawTx);
+                      //     console.log("\n\n\n Rawtx:", rawTx);
     
-                          const tx = new Tx(rawTx);
-                          // console.log("sadasdsad", tx.serialize().toString('hex'));
-                          var pk = priv.toString();
-                          pk = pk.substr(2,pk.length);
-                          var pk2 = Buffer.Buffer.from(pk,'hex');
-                          tx.sign(pk2);
-                          const serializedTx = tx.serialize();
-                          this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
-                          .on('receipt', (dd)=>{
-                            console.log('receipt',dd)
-                            resolve(dd)
-                          })
-                          .on('error',(ee)=>{
-                            console.log('error:',ee)
-                            reject(ee)
-                          });
+                      //     const tx = new Tx(rawTx);
+                      //     // console.log("sadasdsad", tx.serialize().toString('hex'));
+                      //     var pk = priv.toString();
+                      //     pk = pk.substr(2,pk.length);
+                      //     var pk2 = Buffer.Buffer.from(pk,'hex');
+                      //     tx.sign(pk2);
+                      //     const serializedTx = tx.serialize();
+                      //     this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
+                      //     .on('receipt', (dd)=>{
+                      //       console.log('receipt',dd)
+          
+                      //       this.mycryptoService.saveToLocal("SISContractBlockHash",dd.blockHash);
+                      //       this.mycryptoService.saveToLocal("SISContractAddress",dd.contractAddress);
+                      //       this.mycryptoService.saveToLocal("SISContractTxHash",dd.transactionHash);
+                      //       this.mycryptoService.saveToLocal("SISContractReceiptDetail",JSON.stringify(dd));
+                            
+                      //       // console.log(
+                      //       //   this.mycryptoService.retrieveFromLocal("SISContractBlockHash"),
+                      //       //   this.mycryptoService.retrieveFromLocal("SISContractAddress"),
+                      //       //   this.mycryptoService.retrieveFromLocal("SISContractTxHash"),
+                      //       //   this.mycryptoService.retrieveFromLocal("SISContractReceiptDetail")
+                      //       // )
+                            
+                      //       resolve(dd)
+                      //     })
+                      //     .on('error',(ee)=>{
+                      //       console.log('error:',ee)
+                      //       reject(ee)
+                      //     });
 
-                        }
-                      )
+                      //   }
+                      // )//end
                      
                       // nonceHex = nonceHex.toString().substr(0,nonceHex.toString().length-18);
                       // console.log("gl", gasLimit, "gp", gasPrice);
@@ -253,4 +343,5 @@ export class CasService {
     //     }
     // })
   }
+
 }

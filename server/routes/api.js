@@ -93,18 +93,25 @@ router.get('/web3/contract/compile/erc20',(req,res)=>{
       var contract = solc.compile(contractfile,1);
 
       var jsonTemp = [];
+      var i = 0;
       for (var contractName in contract.contracts) {
         // code and ABI that are needed by web3
-        console.log(contractName + ': ' + contract.contracts[contractName].bytecode)
-        console.log(contractName + '; ' + JSON.parse(contract.contracts[contractName].interface))
-        jsonTemp.push({
-          bytecode:contract.contracts[contractName].bytecode,
-          interface:JSON.parse(contract.contracts[contractName].interface)
-        });
+        // console.log(contractName + ': ' + contract.contracts[contractName].bytecode)
+        // console.log(contractName + '; ' + JSON.parse(contract.contracts[contractName].interface))
+        let l = JSON.parse(contract.contracts[contractName].interface);
+        console.log("length:",l.length," index",(i++))
+        if(l.length == 33){
+
+          jsonTemp.push({
+            bytecode:contract.contracts[contractName].bytecode,
+            interface:JSON.parse(contract.contracts[contractName].interface)
+          });
+
+        }
       }
 
       pass = {
-        // contract:jsonTemp,
+        contractMain:jsonTemp,
         bytecode:jsonTemp[0].bytecode,
         interface:jsonTemp[0].interface,
         contract:contract,

@@ -17,12 +17,16 @@ export class UserhomecsvdetailComponent implements OnInit {
   csvData:any;
   eleData:Element[] = [];
 
+  web3:any;
+
+  fileData:any;
+
   constructor(
     public mycryptoService:MycryptoService,
     public casService:CasService,
     public router:Router
   ) { 
-
+    this.web3 = this.casService.init();
   }
 
   ngOnInit() {
@@ -33,16 +37,21 @@ export class UserhomecsvdetailComponent implements OnInit {
     }else{
 
       let dt = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFileUploadContent")).toString());
-      // console.log(dt,this.csvData,dt.csvData.length)
+      console.log(dt,this.csvData,dt.csvData.length)
+      this.fileData = dt.filedata.ufile;
+      console.log(this.fileData)
       if(dt.csvData.length == 0){
         this.router.navigateByUrl("/home");
-      }else{
+      }else if(this.haveFileError(dt.csvData,this.web3)){
+        this.router.navigateByUrl("/home");
+      }
+      else{
 
         let details = dt.csvData;
         let rows = [];
 
         details.forEach((value,key) => {
-          console.log(value,key) 
+          // console.log(value,key) 
           rows.push({
             position:(key+1),
             address:value[0],
@@ -55,11 +64,31 @@ export class UserhomecsvdetailComponent implements OnInit {
         this.displayedColumns = ['position', 'address', 'tokens'];//['no', 'address', 'tokens'];
         this.dataSource = new MatTableDataSource<Element>(this.eleData);
 
-        console.log(this.eleData,this.dataSource)
+        // console.log(this.eleData,this.dataSource)
       }
     }
   }
 
+  haveFileError(csv,web3){//should return 0
+    let error = false;
+    // csv.forEach((value,key) => {
+    let value = csv;
+    // console.log(value)
+    for(let key=0;key<value.length;key++){  
+        // console.log(value[key][0],value.length)
+        // console.log(web3.utils.isAddress(value[key][0]),value[key][1])
+        if(web3.utils.isAddress(value[key][0]) && (value[key][1]!=0||value[key][1]!="0")){
+          // console.log(value,key)
+          error = false;
+        }else{
+          // console.log("error")
+          error = true;
+          break;
+          // return false;
+        }
+    };
+    return error;
+  }
   
 }
 

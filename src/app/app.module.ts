@@ -60,6 +60,7 @@ import { NavbarComponent } from './layout/navbar/navbar.component';
 import { UserhomeComponent } from './userhome/userhome.component';
 import { UserhomemodelComponent } from './userhomemodel/userhomemodel.component';
 import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
+import { UserhomesinglemodelComponent } from './userhomesinglemodel/userhomesinglemodel.component';
 
 
 
@@ -109,10 +110,12 @@ export class DemoMaterialModule {}
     WelcomeComponent,
     NavbarComponent, UserhomeComponent,
     UserhomemodelComponent,
-    UserhomecsvdetailComponent
+    UserhomecsvdetailComponent,
+    UserhomesinglemodelComponent
   ],
   entryComponents: [
-    UserhomemodelComponent
+    UserhomemodelComponent,
+    UserhomesinglemodelComponent
   ],
   imports: [
     BrowserModule,

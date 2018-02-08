@@ -2,28 +2,23 @@
 <ngx-loading [show]="ngxloading"></ngx-loading>
 <mat-dialog-content>
   
-  CSV detail for tokens list
-  <br>
+  
   <div *ngIf="initialView == 0" class="maindiv">
     <mat-card class="modelcard">
         <mat-card-content class="modelcontent">
           <div class="table-responsive divtable">
             <table>
               <tr>
-                <th>Total Transaction Address:</th>
-                <td>{{countTXAddresses}}</td>
+                <th>Transaction Address:</th>
+                <td>{{toaddress}}</td>
               </tr>
               <tr>
-                <th>Total CAS Tokens:</th>
-                <td>{{totalTXTokens}}</td>
+                <th>CAS Tokens:</th>
+                <td>{{tokenstosend}}</td>
               </tr>
               <tr>
-                <th>Individual Fee:</th>
+                <th>Fee:</th>
                 <td>{{SISFeeCalc.individual}} Ether</td>
-              </tr>
-              <tr>
-                <th>Total Fee:</th>
-                <td>{{SISFeeCalc.total}} Ether</td>
               </tr>
               <tr>
                 <th>CAS in from:</th>
@@ -32,13 +27,6 @@
               <tr>
                 <th>ETH is from:</th>
                 <td>{{SISFeeCalc.eth}} Ether</td>
-              </tr>
-              <tr>
-                <th>CSV Status:</th>
-                <td>
-                    <mat-chip-list *ngIf="isCSVValid == true"><mat-chip style="background-color:#4ac395;" selected="true" (click)="validate()">Valid CSV</mat-chip></mat-chip-list>
-                    <mat-chip-list *ngIf="isCSVValid == false"><mat-chip style="background-color:#c70606;" selected="true" (click)="validate()">Invalid CSV</mat-chip></mat-chip-list>
-                </td>
               </tr>
             </table>
           </div>
@@ -61,10 +49,10 @@
   </div>
 
   <div *ngIf="initialView == 2" class="formdiv">
-      <div class="successimg">
-          {{successmessage}}
-          <img src="assets/lib/image/yes.png" class="img">
-        </div>
+    <div class="successimg">
+      {{successmessage}}
+      <img src="assets/lib/image/yes.png" class="img">
+    </div>
   </div>
 
 </mat-dialog-content>
@@ -72,10 +60,10 @@
   
     <div *ngIf="initialView == 0">
         <div class="hortbtns">
-            <div class="errmsg">{{errormessage}}</div>
-            <button mat-button class="cancelbtn" mat-dialog-close>Cancel</button>
+          <div class="errmsg">{{errormessage}}</div>
+          <button mat-button class="cancelbtn" mat-dialog-close>Cancel</button>
           <!-- <button mat-button [mat-dialog-close]="true">Next</button> -->
-          <button mat-button class="nextbtn" (click)="next(1)">Next</button>
+          <button mat-button class="nextbtn" *ngIf="disablebtnfor == ''" (click)="next(1)">Next</button>
           <button mat-button class="errorbtn" disabled *ngIf="disablebtnfor == 'lesstoken'" (click)="showmsg('lesstoken')">Next</button>
           <button mat-button class="errorbtn" disabled *ngIf="disablebtnfor == 'lesseth'" (click)="showmsg('lesseth')">Next</button>
           

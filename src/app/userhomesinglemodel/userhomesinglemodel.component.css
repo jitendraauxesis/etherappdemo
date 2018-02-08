@@ -69,6 +69,11 @@ mat-chip-list.mat-chip-list {
     float: right;
     right: 0;
 }
+
+table tbody tr td {
+    word-break: break-all;
+}
+
 img.img {
     width: 50%;
 }
@@ -80,4 +85,10 @@ button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
 .errmsg {
     color: #ff6666;
     margin-bottom: 4%;
+}
+
+.successimg {
+    font-size: 15px;
+    font-family: sans-serif;
+    word-break: break-all;
 }
