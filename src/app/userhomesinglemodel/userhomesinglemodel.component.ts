@@ -14,8 +14,11 @@ import * as moment from 'moment';
   styleUrls: ['./userhomesinglemodel.component.css']
 })
 export class UserhomesinglemodelComponent implements OnInit {
+  link: HTMLAnchorElement;
 
   initialView:number = 0;
+  isSuccessinitialView:boolean = true;
+
 
   fromaddress:any;
   privatekey:any;
@@ -30,6 +33,9 @@ export class UserhomesinglemodelComponent implements OnInit {
   disablebtnfor:string = '';
   errormessage:string = '';
   successmessage:string = '';
+
+  viewAddress:string = 'https://ropsten.etherscan.io/address/';
+  viewHash:string = 'https://ropsten.etherscan.io/tx/';
 
   constructor(
     public casService:CasService,
@@ -118,7 +124,43 @@ export class UserhomesinglemodelComponent implements OnInit {
         let address = wallet.address;
         console.log(address,this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress"),this.fromaddress )
         if(this.fromaddress == address){
-          this.sendTokens();
+          this.ngxloading  = true;
+          this.sendTokens()
+          .then(
+            d=>{
+              console.log("PromiseMultiple:",d)
+              let dt = JSON.parse(JSON.stringify(d));
+              if(dt.status == "infail"){
+                this.snackBar.open(dt.message,'',{
+                  duration:2000
+                });
+                this.isSuccessinitialView = false;
+                this.successmessage = dt.message;
+                this.initialView = 2;
+                this.ngxloading  = false;
+              }else if(dt.status == "success"){
+                this.snackBar.open(dt.message,'',{
+                  duration:2000
+                });
+                this.isSuccessinitialView = true;
+                this.initialView = 2;
+                this.ngxloading  = false;
+              }
+              else{
+                this.ngxloading  = false;
+                this.snackBar.open('Token transfer failed','',{
+                  duration:2000
+                });
+              }
+            },
+            e=>{
+              this.ngxloading  = false;
+              console.log(e)
+              this.snackBar.open('Token transfer failed','',{
+                duration:2000
+              });
+            }
+          );
         }else{
           this.snackBar.open('Private Key Is Invalid','',{
             duration:2000
@@ -133,7 +175,8 @@ export class UserhomesinglemodelComponent implements OnInit {
   }
 
   sendTokens(){
-    this.ngxloading  = true;
+    return new Promise((resolve,reject)=>{
+      
     let ContractABI = this.mycryptoService.retrieveFromLocal("SISContractABI");
     let ContractByteCode = this.mycryptoService.retrieveFromLocal("SISContractByteCode");
     let ContractData = this.mycryptoService.retrieveFromLocal("SISContractData");
@@ -215,7 +258,7 @@ export class UserhomesinglemodelComponent implements OnInit {
             this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
             .on('transactionHash', (hash)=>{
                 console.log(hash)
-                this.successmessage = tt+' tokens has been transfer to '+firstAdd+' with '+hash+'.';
+                this.successmessage = tt+' tokens has been transfer to '+'<a class="alink" href="'+this.viewAddress+firstAdd+'" target="_blank">'+firstAdd+'</a> with transaction hash <a class="alink" href="'+this.viewHash+hash+'" target="_blank">'+hash+'</a>.';
               
                 let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
                 console.log(ddata)
@@ -232,7 +275,7 @@ export class UserhomesinglemodelComponent implements OnInit {
                   }])); 
                 }else{
                   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-                  
+                  console.log(ddata,this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
                   // this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(p))
                   // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
                   let dth = hash;
@@ -254,7 +297,13 @@ export class UserhomesinglemodelComponent implements OnInit {
                     };
                     // let p = {"id":maxid,"fromaddress":"0xcD0f4B8aC1079E894394448880B90e23d1a7C72e","toaddress":"0x0B4E82f84CcC40Dd5920602ef01E75692032195f","tokens":"34","transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","timestamp":"2018-02-08T10:42:54.929Z","receiptdetail":{"blockHash":"0xa33cda3d793e9f56a93f2d20fcbff5b15db10a79369051278236d91d989f4655","blockNumber":2612732,"contractAddress":null,"cumulativeGasUsed":86900,"from":"0xcd0f4b8ac1079e894394448880b90e23d1a7c72e","gasUsed":37075,"logs":[{"address":"0x11Dc5a650E1e2a32C336Fa73439e7CC035976c06","topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef","0x000000000000000000000000cd0f4b8ac1079e894394448880b90e23d1a7c72e","0x0000000000000000000000000b4e82f84ccc40dd5920602ef01e75692032195f"],"data":"0x000000000000000000000000000000000000000000000001d7d843dc3b480000","blockNumber":2612732,"transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","transactionIndex":2,"blockHash":"0xa33cda3d793e9f56a93f2d20fcbff5b15db10a79369051278236d91d989f4655","logIndex":0,"removed":false,"id":"log_321b1310"}],"logsBloom":"0x00000000000000000000000000000000004000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000010000000000000000000000000000040020000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000001000000000004000000000000000000000000000000000000000000000020000000000000000000000000000000000","status":"0x1","to":"0x11dc5a650e1e2a32c336fa73439e7cc035976c06","transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","transactionIndex":2}};
                     let arr = [];
-                    arr = ddata;
+                    // arr.push(ddata);
+                    let pp = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists").toString()));
+                    // console.log(pp)
+                    pp.forEach((value,key) => {
+                      // console.log(value,key)
+                      arr.push(value)
+                    });
                     arr.push(distribute);
                     // console.log(arr)
                     this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
@@ -262,12 +311,14 @@ export class UserhomesinglemodelComponent implements OnInit {
                     console.log(dd1)
                   }
                 }
-
-                this.snackBar.open(tt+' Tokens sent.','',{
-                  duration:2000
-                });
-                this.initialView = 2;
-                this.ngxloading  = false;
+                this.mycryptoService.saveToLocal("SISDistributedTokenListsJSON",JSON.stringify({
+                  toAddress:firstAdd,
+                  tokens:tt,
+                  transactionHash:hash,
+                  notes:'Successful token transfer'
+                }))
+                resolve({status:"success",message:tt+' Tokens sent.'})
+                
             })
             // .on('receipt', (dd)=>{
             //   console.log('receipt',dd)
@@ -302,11 +353,65 @@ export class UserhomesinglemodelComponent implements OnInit {
               
             // })
             .on('error',(ee)=>{
-              this.ngxloading  = false;
+              // this.ngxloading  = false;
               console.log('error:',ee)
-              this.snackBar.open('Token transfer failed','',{
-                duration:2000
-              });
+              let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
+                console.log(ddata)
+                if(ddata == null || ddata == ""){
+                  console.log("no receipts")
+                  this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify([{
+                    id:1,
+                    fromaddress:creating_address,
+                    toaddress:firstAdd,
+                    tokens:tt,
+                    transactionHash:null,
+                    distributed:'single',
+                    timestamp:new Date(),
+                    message:ee.message
+                  }])); 
+                }else{
+                  ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
+                  
+                  // this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(p))
+                  // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
+                  let dth = null;
+                  let find = _.find(ddata, function(o) { if(o.transactionHash == dth){ return o; } });
+                  if(find == dth){
+                    console.log("donothing")
+                  }else{
+                    let max = _.maxBy(ddata, function(o) { return o.id; });
+                    console.log(max,max.id)
+                    let maxid = max.id+1;
+                    let distribute = {
+                      id:maxid,
+                      fromaddress:creating_address,
+                      toaddress:firstAdd,
+                      tokens:tt,
+                      transactionHash:null,
+                      distributed:'single',
+                      timestamp:new Date(),
+                      message:ee.message
+                    };
+                    // let p = {"id":maxid,"fromaddress":"0xcD0f4B8aC1079E894394448880B90e23d1a7C72e","toaddress":"0x0B4E82f84CcC40Dd5920602ef01E75692032195f","tokens":"34","transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","timestamp":"2018-02-08T10:42:54.929Z","receiptdetail":{"blockHash":"0xa33cda3d793e9f56a93f2d20fcbff5b15db10a79369051278236d91d989f4655","blockNumber":2612732,"contractAddress":null,"cumulativeGasUsed":86900,"from":"0xcd0f4b8ac1079e894394448880b90e23d1a7c72e","gasUsed":37075,"logs":[{"address":"0x11Dc5a650E1e2a32C336Fa73439e7CC035976c06","topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef","0x000000000000000000000000cd0f4b8ac1079e894394448880b90e23d1a7c72e","0x0000000000000000000000000b4e82f84ccc40dd5920602ef01e75692032195f"],"data":"0x000000000000000000000000000000000000000000000001d7d843dc3b480000","blockNumber":2612732,"transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","transactionIndex":2,"blockHash":"0xa33cda3d793e9f56a93f2d20fcbff5b15db10a79369051278236d91d989f4655","logIndex":0,"removed":false,"id":"log_321b1310"}],"logsBloom":"0x00000000000000000000000000000000004000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000010000000000000000000000000000040020000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000001000000000004000000000000000000000000000000000000000000000020000000000000000000000000000000000","status":"0x1","to":"0x11dc5a650e1e2a32c336fa73439e7cc035976c06","transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","transactionIndex":2}};
+                    let arr = [];
+                    // arr = ddata;
+                    arr.push(distribute);
+                    // console.log(arr)
+                    this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
+                    let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
+                    console.log(dd1)
+                  }
+                }
+                this.mycryptoService.saveToLocal("SISDistributedTokenListsJSON",JSON.stringify({
+                  toAddress:firstAdd,
+                  tokens:tt,
+                  transactionHash:null,
+                  notes:'Token transfer failed due to '+ee.message
+                }))
+                resolve({status:"infail",message:'Token transfer failed due to '+ee.message});
+              // this.snackBar.open('Token transfer failed','',{
+              //   duration:2000
+              // });
             }); 
             
           }
@@ -315,6 +420,52 @@ export class UserhomesinglemodelComponent implements OnInit {
     );
 
     
+    })
   }
+
+  fileEXPORTDATA:string = "";
+  fileEXPORTDATABASE:any;
+  fileEXPORTJSONDATA:any = [];
+  fileEXPORTJSONDATABASE:any;
+  download(type){
+    let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsJSON")).toString());
+    if(type == "csv"){
+      console.log("type",type,data)
+      let resp = data.response?data.response:"Succeessful token transfer";
+
+      this.fileEXPORTDATA = data.toAddress+","+data.tokens+","+data.transactionHash+","+resp;
+      console.log(this.fileEXPORTDATA)
+      console.log(btoa(this.fileEXPORTDATA))
+
+      this.fileEXPORTDATABASE = btoa(this.fileEXPORTDATA);
+      let val =  "data:text/csv;base64,"+this.fileEXPORTDATABASE;
+      let filename = moment().unix()+"-"+this.tokenstosend+"-CAS-Token-Distribution";
+      this.downloadURI(val, filename+".csv");
+    }else if(type == "json"){
+      console.log("type",type,data)
+
+      this.fileEXPORTJSONDATA = data;
+
+      console.log(this.fileEXPORTJSONDATA)
+      console.log(btoa(JSON.stringify(this.fileEXPORTJSONDATA)))
+      this.fileEXPORTJSONDATABASE = btoa(JSON.stringify(this.fileEXPORTJSONDATA));
+      let val =  "data:application/json;base64,"+this.fileEXPORTJSONDATABASE;
+      let filename = moment().unix()+"-"+this.tokenstosend+"-CAS-Token-Distribution";
+      this.downloadURI(val, filename+".json");
+      // this.downloadURI(val.value, filename+".csv");
+    }
+  }
+  
+  downloadURI(uri, name) {
+      
+    this.link = document.createElement("a");
+    this.link.download = name;
+    this.link.href = uri;
+    document.body.appendChild(this.link);
+    this.link.click();
+    document.body.removeChild(this.link);
+    delete this.link;
+  }
+
 
 }

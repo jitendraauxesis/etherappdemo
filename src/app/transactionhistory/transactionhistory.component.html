@@ -1,0 +1,40 @@
+<app-navbar></app-navbar>
+<mat-divider></mat-divider>
+<ngx-loading [show]="ngxloading"></ngx-loading>
+<mat-card class="panelcard">
+  <mat-card-content>
+    <div class="tablecontent" *ngIf="isDataAvailable == true">
+      <table>
+        <thead>
+          <tr>
+            <th>Sr No.</th>
+            <th>Transaction Type</th>
+            <th>Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of tableContent">
+            <td>
+              {{t.id}}
+            </td>
+            <td>
+              <p *ngIf="t.distributed == 'single'">Single Address</p>
+              <p *ngIf="t.distributed == 'multiple'">Multiple Addresses</p>
+            </td>
+            <td>
+              {{convertToDate(t.timestamp)}}
+            </td>
+            <td>
+                <img src="assets/lib/image/csv.png" class="csvbtn" (click)="download(t,'csv')">
+                <img src="assets/lib/image/json-file.png" class="jsonbtn" (click)="download(t,'json')">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="nodataContent" *ngIf="isDataAvailable == false">
+      <img src="assets/lib/image/nodata-available.jpg" class="nodata">
+    </div>
+  </mat-card-content>
+</mat-card>

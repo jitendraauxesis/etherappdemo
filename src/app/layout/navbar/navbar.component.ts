@@ -23,4 +23,7 @@ export class NavbarComponent implements OnInit {
     this.router.navigateByUrl("/csv/detail");
   }
 
+  history(){
+    this.router.navigateByUrl("/history");    
+  }
 }

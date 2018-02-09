@@ -61,6 +61,7 @@ import { UserhomeComponent } from './userhome/userhome.component';
 import { UserhomemodelComponent } from './userhomemodel/userhomemodel.component';
 import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
 import { UserhomesinglemodelComponent } from './userhomesinglemodel/userhomesinglemodel.component';
+import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
 
 
 
@@ -111,7 +112,8 @@ export class DemoMaterialModule {}
     NavbarComponent, UserhomeComponent,
     UserhomemodelComponent,
     UserhomecsvdetailComponent,
-    UserhomesinglemodelComponent
+    UserhomesinglemodelComponent,
+    TransactionhistoryComponent
   ],
   entryComponents: [
     UserhomemodelComponent,
@@ -138,7 +140,7 @@ export class DemoMaterialModule {}
     {
       provide:LocationStrategy,
       useClass:HashLocationStrategy
-    },
+    }, 
     MywebService,
     MycryptoService,
     CasService,

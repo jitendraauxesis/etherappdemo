@@ -6,6 +6,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { NavbarComponent } from './layout/navbar/navbar.component';
 import { UserhomeComponent } from './userhome/userhome.component';
 import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
+import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
 
 const routes:Routes = [
     /**
@@ -27,6 +28,10 @@ const routes:Routes = [
     {
         path: "csv/detail",
         component: UserhomecsvdetailComponent
+    },
+    {
+        path: "history",
+        component: TransactionhistoryComponent
     },
     {
         path: "**",

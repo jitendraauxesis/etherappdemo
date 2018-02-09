@@ -14,12 +14,14 @@ import * as moment from 'moment';
   styleUrls: ['./userhomemodel.component.css']
 })
 export class UserhomemodelComponent implements OnInit {
-  
+  link: HTMLAnchorElement;
+
   countTXAddresses:number = 0;
   countTXTokens:number = 0;
   totalTXTokens:any = 0;
 
   initialView:number = 0;
+  isSuccessinitialView:boolean = true;
 
   isCSVValid:boolean = false;
 
@@ -48,7 +50,7 @@ export class UserhomemodelComponent implements OnInit {
     this.fromaddress = this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress");
 
     let csvFileContent = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFileUploadContent")).toString());
-    console.log(csvFileContent);
+    // console.log(csvFileContent);
 
     //file is valid
     let isValid = csvFileContent.filedata.ufile.filetype;
@@ -62,7 +64,7 @@ export class UserhomemodelComponent implements OnInit {
     let rows = [];
     
     details.forEach((value,key) => {
-      // console.log(value,key)
+      // // console.log(value,key)
       this.countTXAddresses =  key+1; 
       this.countTXTokens = key+1;
       rows.push({
@@ -75,26 +77,26 @@ export class UserhomemodelComponent implements OnInit {
 
     this.csvParseDetail = rows;
 
-    // console.log(details,this.countTXTokens,this.countTXAddresses)
+    console.log(this.csvParseDetail)
 
     //fee
     this.SISFeeCalc = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFeeCalc")).toString());
-    console.log(this.SISFeeCalc);
+    // console.log(this.SISFeeCalc);
 
     if(this.SISFeeCalc.individual > this.SISFeeCalc.eth){
-      console.log("here eth")
+      // console.log("here eth")
       this.disablebtnfor = 'lesseth';
       this.errormessage += 'Ether balance is too low. ';
     }
     if(this.totalTXTokens > this.SISFeeCalc.cas ){
-      console.log("here token")
+      // console.log("here token")
       this.disablebtnfor = 'lesstoken';
       this.errormessage += 'Tokens is more than you are transferring. ';
     } 
-    console.log(
-      this.totalTXTokens,this.SISFeeCalc.cas,
-      this.SISFeeCalc.individual, this.SISFeeCalc.eth
-    )
+    // console.log(
+    //   this.totalTXTokens,this.SISFeeCalc.cas,
+    //   this.SISFeeCalc.individual, this.SISFeeCalc.eth
+    // )
   }
 
   next(arg){
@@ -117,21 +119,57 @@ export class UserhomemodelComponent implements OnInit {
     }else{
       try{
         let wallet = new ethers.Wallet(this.privatekey);
-        // console.log(wallet)
+        // // console.log(wallet)
         let address = wallet.address;
-        console.log(address,this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress"),this.fromaddress )
+        // console.log(address,this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress"),this.fromaddress )
         if(this.fromaddress == address){
-          console.log("sendtokens")
+          // console.log("sendtokens")
+          this.ngxloading  = true;
           this.sendTokens()
-          // console.log(a)
-          // .then(
-          //   d=>{
-          //     console.log("PromiseMultiple:",d)
-          //   },
-          //   e=>{
-          //     console.log(e)
-          //   }
-          // );
+          // // console.log(a)
+          .then(
+            d=>{
+              // console.log("PromiseMultiple:",d)
+              let dt = JSON.parse(JSON.stringify(d));
+              if(dt.status == "infail"){
+                this.ngxloading  = false;
+                this.snackBar.open('One of token transfer failed','',{
+                  duration:2000
+                });
+                this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);                
+                this.initialView = 2;
+                this.isSuccessinitialView = false;
+                this.successmessage = "One of token transfer failed";
+                this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
+                // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
+              }else if(dt.status == "success"){
+                this.ngxloading  = false;
+                this.snackBar.open('Token transfer success','',{
+                  duration:2000
+                });
+                this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);
+                this.initialView = 2;
+                this.isSuccessinitialView = true;
+                this.successmessage = 'Total '+this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses+' addresses';
+                this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
+                // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
+                
+              }else{
+                this.ngxloading  = false;
+                this.snackBar.open('Token transfer failed','',{
+                  duration:2000
+                });
+              }
+            },
+            e=>{
+              this.ngxloading  = false;
+              // console.log(e)
+              this.snackBar.open('Token transfer failed','',{
+                duration:2000
+              });
+            }
+          );
+          
         }else{
           this.snackBar.open('Private Key Is Invalid','',{
             duration:2000
@@ -158,14 +196,14 @@ export class UserhomemodelComponent implements OnInit {
     let contractAddress = this.mycryptoService.retrieveFromLocal("SISContractAddress");
     
 
-    // console.log(
+    // // console.log(
     //   contractABI,contractByteCode,contractData,contractAddress,
     //   creating_address,priv,this.csvParseDetail
     // )
 
     let csvfor = this.csvParseDetail;
     csvfor.forEach((value,key) => {
-      console.log(value,key)
+      // console.log(value,key)
     });
 
     var gasLimit = 1302200;
@@ -178,9 +216,9 @@ export class UserhomemodelComponent implements OnInit {
     
     Promise.all([nonce]).then(
       d=>{
-        // console.log(d)
+        // // console.log(d)
         var nonceHex = this.web3.utils.toHex(d);
-        // console.log(nonceHex)
+        // // console.log(nonceHex)
 
         const rawTx = {
           nonce: nonceHex,
@@ -190,7 +228,7 @@ export class UserhomemodelComponent implements OnInit {
           from: creating_address
         };
 
-        console.log("\n\n\n Rawtx:", rawTx);
+        // console.log("\n\n\n Rawtx:", rawTx);
       },
       e=>{
         this.snackBar.open('Unable to find nonce','',{
@@ -198,6 +236,12 @@ export class UserhomemodelComponent implements OnInit {
         });
       }
     );
+  }
+
+
+  i = 1;
+  ngDoCheck(){
+    // // console.log("asdf",this.i++);
   }
 
   sendTokens(){
@@ -219,123 +263,169 @@ export class UserhomemodelComponent implements OnInit {
       let appendValue = csvfor;
       let stringhashes = '';let stringaddresses = '';
       let globalnonce;
-
+      let incr = _.size(csvfor);
+      // csvfor.forEach((value,key) => {
+      // });
+      var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
+      const gasPrice = this.web3.eth.getGasPrice();//1800000000;
+      var gasLimit = 1302200;
+                                            
       const nonce = this.web3.eth.getTransactionCount(creating_address);
       nonce.then(
         dnonce => {
           globalnonce = dnonce;
-        
+          
+          // var gasLimit = this.web3.eth.estimateGas({ 
+          //   to: creating_address, // data: '0x' + bytecode, 
+          //   data: ContractData, // from: wallet.address, 
+          // }).then(
+          //   valgas =>{ 
+              csvfor.forEach((value,key) => {
+                // for(let key=0;key<value.length;key++){
+                // // console.log(value,key,value[key],value[key].address,value[key].tokens)
+                // // console.log(value,value.address,value.tokens)
+                stringaddresses += value.address;  
 
-          csvfor.forEach((value,key) => {
-            // for(let key=0;key<value.length;key++){
-            // console.log(value,key,value[key],value[key].address,value[key].tokens)
-            console.log(value,value.address,value.tokens)
-            stringaddresses += value.address; 
+                
 
-            
+               
+                    // // console.log("gasLimit:",valgas)
+                    // // console.log(gasLimit)
+                    // // console.log("gasPrice:",gasPrice);
+                    // const nonce = this.web3.eth.getTransactionCount(creating_address);
 
-            var gasLimit = this.web3.eth.estimateGas({ 
-              to: creating_address, // data: '0x' + bytecode, 
-              data: ContractData, // from: wallet.address, 
-            }).then(
-              valgas =>{ 
-                // console.log("gasLimit:",valgas)
-                // console.log(gasLimit)
-                var gasLimit = valgas;//1302200;
-                const gasPrice = this.web3.eth.getGasPrice();//1800000000;
-                // console.log("gasPrice:",gasPrice);
-                // const nonce = this.web3.eth.getTransactionCount(creating_address);
-
-                var nonceHex;
-                Promise.all([gasPrice])
-                .then(
-                  (d)=>{
-                    console.log("gasPricePromise:",d)
-                    const gasPriceHex = this.web3.utils.toHex(d[0]);
-                    const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
-                    globalnonce = globalnonce + key;
-                    var nonceHex = this.web3.utils.toHex(globalnonce);
-                    // globalnonce = d[1];
-                    var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
-                    // console.log("contract:",contract,"\nCA::",ContractAddress)
-                    
-
-                    // contract.methods.balanceOf(creating_address)
-                    // .call((err, ress)=>{ 
-                    //   // console.log("ERR:",err, "Response BAL:", ress); 
-                    // })
-                    var tokens = value.tokens;
-                    var firstAdd = value.address;
-                    
-                    tokens = this.web3.utils.toWei(tokens,'ether');
-                    // console.log(tokens);
-                    
-                    tokens = tokens.toString('hex');
-                    // console.log(tokens);
-
-                    // tokens = tokens*Math.pow(10,-18);
-                    // console.log(tokens)
-
-                    var hexdata = contract.methods.transfer(firstAdd,tokens)
-                    .encodeABI();
-                    console.log("asdasdas", hexdata);
-
-                    const rawTx = {
-                      nonce: nonceHex,
-                      gasPrice: gasPriceHex,
-                      gasLimit: gasLimitHex,
-                      data: hexdata,
-                      to: ContractAddress
-                    };
-                    const tx = new Tx(rawTx);
-                    console.log("rawTX:", tx.serialize().toString('hex'),rawTx); 
-                    var pk = priv.toString();
-                    pk = pk.substr(2,pk.length);
-                    var pk2 = Buffer.Buffer.from(pk,'hex');
-                    tx.sign(pk2);
-                    const serializedTx = tx.serialize();
-                    this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
-                    .on('transactionHash', (hash)=>{
-                        console.log(hash)
-                        // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
-                        stringhashes += hash+',';
-                        let aa = {
-                          position:key,
-                          // address:value[0],
-                          tokens:value.tokens,
-                          address:value.address,
-                          hash:hash
-                        };
-                        appendDATAHASHES.push(aa); 
-                        console.log("appendDATAHASHES",appendDATAHASHES)
-                        let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
-                        console.log(ddata)
-                        // if(ddata ==null || ddata == ""){
-                        //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
-                        // }else{
-                        //   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
-                        //   let arr = [];
-                        //   ddata.forEach((value,key) => {
-                            
-                        //   });
-                        //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
-                        // }
+                    var nonceHex;
+                    Promise.all([gasPrice])
+                    .then(
+                      (d)=>{
+                        // // console.log("gasPricePromise:",d)
+                        const gasPriceHex = this.web3.utils.toHex(d[0]);
+                        const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
+                        // globalnonce = globalnonce++;
+                        console.log(globalnonce)
+                        var nonceHex = this.web3.utils.toHex(globalnonce++);
+                        // globalnonce = d[1];
+                        // // console.log("contract:",contract,"\nCA::",ContractAddress)
                         
-                    })
-                    .on('error',(ee)=>{
-                      // this.ngxloading  = false;
-                      console.log('error:',ee)
-                      // this.snackBar.open('Token transfer failed','',{
-                      //   duration:2000
-                      // });
-                      reject({status:"fail",message:ee});
-                    }); 
-                  }
-                )
-              }
-            );
-          });
-          console.log("appendDATAHASHES",appendDATAHASHES) 
+
+                        // contract.methods.balanceOf(creating_address)
+                        // .call((err, ress)=>{ 
+                        //   // // console.log("ERR:",err, "Response BAL:", ress); 
+                        // })
+                        var tokens = value.tokens;
+                        var firstAdd = value.address;
+                        
+                        tokens = this.web3.utils.toWei(tokens,'ether');
+                        // // console.log(tokens);
+                        
+                        tokens = tokens.toString('hex');
+                        // // console.log(tokens);
+
+                        // tokens = tokens*Math.pow(10,-18);
+                        // // console.log(tokens)
+
+                        var hexdata = contract.methods.transfer(firstAdd,tokens)
+                        .encodeABI();
+                        // // console.log("asdasdas", hexdata);
+
+                        const rawTx = {
+                          nonce: nonceHex,
+                          gasPrice: gasPriceHex,
+                          gasLimit: gasLimitHex,
+                          data: hexdata,
+                          to: ContractAddress
+                        };
+                        const tx = new Tx(rawTx);
+                        // // console.log("rawTX:", tx.serialize().toString('hex'),rawTx); 
+                        var pk = priv.toString();
+                        pk = pk.substr(2,pk.length);
+                        var pk2 = Buffer.Buffer.from(pk,'hex');
+                        tx.sign(pk2);
+                        const serializedTx = tx.serialize();
+                        this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
+                        // .on('transactionHash', (hash)=>{
+                        //     // console.log(hash)
+                        //     // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
+                        //     stringhashes += hash+',';
+                        //     let aa = {
+                        //       position:key,
+                        //       // address:value[0],
+                        //       tokens:value.tokens,
+                        //       address:value.address, 
+                        //       hash:hash,
+                        //       response:"Successful token transfer"
+                        //     };
+                        //     appendDATAHASHES.push(aa); 
+                        //     // // console.log("appendDATAHASHES",appendDATAHASHES)
+                        //     // // console.log(incr,key);
+                        //     let akey = key+1;
+                        //     if(incr == akey){
+                        //       // this.ngxloading  = false;
+                        //       console.log("I append data "+incr+" "+akey,appendDATAHASHES)
+                        //       // resolve({status:"success",data:appendDATAHASHES});
+                        //     }
+                        //     // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
+                        //     // // console.log(ddata)
+                        //     // if(ddata ==null || ddata == ""){
+                        //     //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
+                        //     // }else{
+                        //     //   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
+                        //     //   let arr = [];
+                        //     //   ddata.forEach((value,key) => {
+                                
+                        //     //   });
+                        //     //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
+                        //     // }
+                            
+                        // })
+                        .on('receipt',(receipt)=>{
+                          console.log(receipt) 
+                          stringhashes += receipt.transactionHash+',';
+                          let aa = {
+                            position:key,
+                            // address:value[0],
+                            tokens:value.tokens,
+                            address:value.address, 
+                            hash:receipt.transactionHash,
+                            response:"Successful token transfer"
+                          };
+                          appendDATAHASHES.push(aa); 
+                          // // console.log("appendDATAHASHES",appendDATAHASHES)
+                          // // console.log(incr,key);
+                          let akey = key+1;
+                          if(incr == akey){
+                            // this.ngxloading  = false;
+                            console.log("I append data "+incr+" "+akey,appendDATAHASHES)
+                            // resolve({status:"success",data:appendDATAHASHES});
+                          } 
+                        })
+                        .on('error',(ee)=>{
+                          // this.ngxloading  = false;
+                          // // console.log('error:',ee,JSON.stringify(ee))
+
+                          if(ee){
+                            stringhashes += null+',';
+                            let aa = {
+                              position:key,
+                              // address:value[0],
+                              tokens:value.tokens,
+                              address:value.address,
+                              hash:null,
+                              message:'Token transfer failed',
+                              response:ee.message
+                            };
+                            appendDATAHASHES.push(aa); 
+                            resolve({status:"infail",data:appendDATAHASHES});
+                          }
+                          // reject({status:"fail",message:ee});
+                        }); 
+                      }
+                    )
+                
+              });
+          //   }
+          // );
+          // console.log("appendDATAHASHES",appendDATAHASHES) 
         }
       )
       
@@ -343,10 +433,10 @@ export class UserhomemodelComponent implements OnInit {
       // if(appendDATAHASHES == null){
       //   this.appendToRECORDS(stringhashes,stringaddresses,creating_address,this.totalTXTokens,appendDATAHASHES);
       //   // resolve({status:"success",data:appendDATAHASHES});
-      //   console.info("asdf",{status:"success",data:appendDATAHASHES})
+      //   // console.info("asdf",{status:"success",data:appendDATAHASHES})
       // }else{
       //   // reject({status:"fail",message:"Hash not generated"});
-      //   console.error({status:"fail",message:"Hash not generated"})
+      //   // console.error({status:"fail",message:"Hash not generated"})
       // }
       // appendDATAHASHES.forEach((value,key)=>{
       //   if(value.hash == null || value.hash == ""){
@@ -356,58 +446,63 @@ export class UserhomemodelComponent implements OnInit {
     })
   }
 
-  appendToRECORDS(strhash,straddr,creating_address,tt,appendDATAHASHES){
-    strhash = strhash.slice(0, -1);
-    straddr = straddr.slice(0, -1);
+  appendToRECORDS(creating_address,tt,appendDATAHASHES){
+    // strhash = strhash.slice(0, -1);
+    // straddr = straddr.slice(0, -1);
 
     // for()
 
-    console.log(strhash,"\n",straddr,"\n",creating_address,tt)
+    // // console.log(strhash,"\n",straddr,"\n",creating_address,tt)
     let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
-    console.log(ddata)
+    // console.log(ddata)
     if(ddata == null || ddata == ""){
-      console.log("no receipts")
+      // console.log("no receipts")
       this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify([{
         id:1,
         fromaddress:creating_address,
-        toaddress:straddr,
+        // toaddress:straddr,
         tokens:tt,
-        transactionHash:strhash,
+        // transactionHash:strhash,
         distributed:'multiple',
         timestamp:new Date(),
-        csvData:''
+        csvData:appendDATAHASHES
       }])); 
     }else{
       ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
       
       // this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(p))
-      // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
+      // // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
       // let dth = hash;
       // let find = _.find(ddata, function(o) { if(o.transactionHash == dth){ return o; } });
       // if(find == dth){
-      //   console.log("donothing")
+      //   // console.log("donothing")
       // }else{
         let max = _.maxBy(ddata, function(o) { return o.id; });
-        console.log(max,max.id)
+        // console.log(max,max.id)
         let maxid = max.id+1;
         let distribute = {
           id:maxid,
           fromaddress:creating_address,
-          toaddress:straddr,
+          // toaddress:straddr,
           tokens:tt,
-          transactionHash:strhash,
+          // transactionHash:strhash,
           distributed:'multiple',
           timestamp:new Date(),
-          csvData:''
+          csvData:appendDATAHASHES
         };
         // let p = {"id":maxid,"fromaddress":"0xcD0f4B8aC1079E894394448880B90e23d1a7C72e","toaddress":"0x0B4E82f84CcC40Dd5920602ef01E75692032195f","tokens":"34","transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","timestamp":"2018-02-08T10:42:54.929Z","receiptdetail":{"blockHash":"0xa33cda3d793e9f56a93f2d20fcbff5b15db10a79369051278236d91d989f4655","blockNumber":2612732,"contractAddress":null,"cumulativeGasUsed":86900,"from":"0xcd0f4b8ac1079e894394448880b90e23d1a7c72e","gasUsed":37075,"logs":[{"address":"0x11Dc5a650E1e2a32C336Fa73439e7CC035976c06","topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef","0x000000000000000000000000cd0f4b8ac1079e894394448880b90e23d1a7c72e","0x0000000000000000000000000b4e82f84ccc40dd5920602ef01e75692032195f"],"data":"0x000000000000000000000000000000000000000000000001d7d843dc3b480000","blockNumber":2612732,"transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","transactionIndex":2,"blockHash":"0xa33cda3d793e9f56a93f2d20fcbff5b15db10a79369051278236d91d989f4655","logIndex":0,"removed":false,"id":"log_321b1310"}],"logsBloom":"0x00000000000000000000000000000000004000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000010000000000000000000000000000040020000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000001000000000004000000000000000000000000000000000000000000000020000000000000000000000000000000000","status":"0x1","to":"0x11dc5a650e1e2a32c336fa73439e7cc035976c06","transactionHash":"0xa15a226354b4303d22b00afdf5cbfa98e982f1cacedc51e124816454ac3bb97f","transactionIndex":2}};
         let arr = [];
-        // arr = ddata;
+        let pp = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists").toString()));
+        // // console.log(pp)
+        pp.forEach((value,key) => {
+          // // console.log(value,key)
+          arr.push(value)
+        });
         arr.push(distribute);
-        console.log(arr)
+        // console.log(arr)
         this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
         let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-        console.log(dd1)
+        // console.log(dd1)
       // }
     }
 
@@ -416,6 +511,61 @@ export class UserhomemodelComponent implements OnInit {
     // });
     // this.initialView = 2;
     // this.ngxloading  = false;
+  }
+
+
+  fileEXPORTDATA:string = "";
+  fileEXPORTDATABASE:any;
+  fileEXPORTJSONDATA:any = [];
+  fileEXPORTJSONDATABASE:any;
+  download(type){
+    let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
+    if(type == "csv"){
+      // console.log("type",type,data)
+      data.forEach((value,key) => {
+        let resp = value.response?value.response:"Succeessful token transfer";
+        // // console.log(value.address+","+value.tokens+","+value.hash+","+resp+"\n")
+        this.fileEXPORTDATA =this.fileEXPORTDATA + value.address+","+value.tokens+","+value.hash+","+resp+"\n";
+        // // console.log(this.ddumdata)
+      });
+      // console.log(this.fileEXPORTDATA)
+      // console.log(btoa(this.fileEXPORTDATA))
+      this.fileEXPORTDATABASE = btoa(this.fileEXPORTDATA);
+      let val =  "data:text/csv;base64,"+this.fileEXPORTDATABASE;
+      let filename = moment().unix()+"-"+this.totalTXTokens+"-CAS-Token-Distribution";
+      this.downloadURI(val, filename+".csv");
+    }else if(type == "json"){
+      // console.log("type",type,data)
+      data.forEach((value,key) => {
+        let resp = value.response?value.response:"Succeessful token transfer";
+        // console.log(value.address+","+value.tokens+","+value.hash+","+resp+"\n")
+        this.fileEXPORTJSONDATA.push({
+          toAddress:value.address,
+          transactionHash:value.hash,
+          tokens:value.tokens,
+          notes:resp
+        })
+        // // console.log(this.ddumdata)
+      });
+      // console.log(this.fileEXPORTJSONDATA)
+      // console.log(btoa(JSON.stringify(this.fileEXPORTJSONDATA)))
+      this.fileEXPORTJSONDATABASE = btoa(JSON.stringify(this.fileEXPORTJSONDATA));
+      let val =  "data:application/json;base64,"+this.fileEXPORTJSONDATABASE;
+      let filename = moment().unix()+"-"+this.totalTXTokens+"-CAS-Token-Distribution";
+      this.downloadURI(val, filename+".json");
+      // this.downloadURI(val.value, filename+".csv");
+    }
+  }
+  
+  downloadURI(uri, name) {
+      
+    this.link = document.createElement("a");
+    this.link.download = name;
+    this.link.href = uri;
+    document.body.appendChild(this.link);
+    this.link.click();
+    document.body.removeChild(this.link);
+    delete this.link;
   }
 
 }

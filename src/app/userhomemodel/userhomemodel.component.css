@@ -70,7 +70,11 @@ mat-chip-list.mat-chip-list {
     right: 0;
 }
 img.img {
-    width: 50%;
+    width: 30%;
+}
+
+img.img2 {
+    width: 30%;
 }
 
 button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
@@ -80,4 +84,28 @@ button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
 .errmsg {
     color: #ff6666;
     margin-bottom: 4%;
+}
+
+.failureimg {
+    font-size: 15px;
+    font-family: sans-serif;
+    word-break: break-all;
+}
+
+.downloadbtns {
+    margin-top: 15px;
+    width: 100%;
+    text-align: center;
+}
+
+.csvbtn{
+    /* background-color: #007f7f;
+    color: #fff; */
+    cursor: pointer;
+}
+
+.jsonbtn {
+    /* background-color: #794044;
+    color: #fff; */
+    cursor: pointer;
 }

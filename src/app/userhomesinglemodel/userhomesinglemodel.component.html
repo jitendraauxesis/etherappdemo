@@ -49,10 +49,22 @@
   </div>
 
   <div *ngIf="initialView == 2" class="formdiv">
-    <div class="successimg">
-      {{successmessage}}
-      <img src="assets/lib/image/yes.png" class="img">
-    </div>
+      <div class="successimg" *ngIf="isSuccessinitialView == true">
+          <img src="assets/lib/image/yes.png" class="img"><br>
+          <!-- {{successmessage}} -->
+          <p [innerHTML]="successmessage"></p>
+      </div>
+      <div class="failureimg" *ngIf="isSuccessinitialView == false">
+          <img src="assets/lib/image/virus.png" class="img"><br>
+        <!-- {{successmessage}} -->
+        <p [innerHTML]="successmessage"></p>        
+      </div>
+      <div class="downloadbtns">
+          <!-- <button mat-button class="csvbtn" (click)="download('csv')">CSV&nbsp;&nbsp;<mat-icon>download</mat-icon> </button>
+          <button mat-button class="jsonbtn" (click)="download('json')">JSON&nbsp;&nbsp;<mat-icon>download</mat-icon> </button> -->
+          <img src="assets/lib/image/csv.png" class="csvbtn" (click)="download('csv')">
+          <img src="assets/lib/image/json-file.png" class="jsonbtn" (click)="download('json')">
+      </div>
   </div>
 
 </mat-dialog-content>

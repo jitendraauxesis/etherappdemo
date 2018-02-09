@@ -2,9 +2,10 @@
 <ngx-loading [show]="ngxloading"></ngx-loading>
 <mat-dialog-content>
   
-  CSV detail for tokens list
-  <br>
+  
   <div *ngIf="initialView == 0" class="maindiv">
+      CSV detail for tokens list
+      <br>
     <mat-card class="modelcard">
         <mat-card-content class="modelcontent">
           <div class="table-responsive divtable">
@@ -61,10 +62,20 @@
   </div>
 
   <div *ngIf="initialView == 2" class="formdiv">
-      <div class="successimg">
-          {{successmessage}}
+      <div class="successimg" *ngIf="isSuccessinitialView == true">
+          {{successmessage}}<br>
           <img src="assets/lib/image/yes.png" class="img">
-        </div>
+      </div>
+      <div class="failureimg" *ngIf="isSuccessinitialView == false">
+        {{successmessage}}<br>
+        <img src="assets/lib/image/virus.png" class="img2">
+      </div>
+      <div class="downloadbtns">
+          <!-- <button mat-button class="csvbtn" (click)="download('csv')">CSV&nbsp;&nbsp;<mat-icon>download</mat-icon> </button>
+          <button mat-button class="jsonbtn" (click)="download('json')">JSON&nbsp;&nbsp;<mat-icon>download</mat-icon> </button> -->
+          <img src="assets/lib/image/csv.png" class="csvbtn" (click)="download('csv')">
+          <img src="assets/lib/image/json-file.png" class="jsonbtn" (click)="download('json')">
+      </div>
   </div>
 
 </mat-dialog-content>
