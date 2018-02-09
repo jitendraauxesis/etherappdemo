@@ -38,11 +38,11 @@ export class TransactionhistoryComponent implements OnInit {
     }else{
       this.isDataAvailable = true;
       let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-      console.log(data)
+      // console.log(data)
       data.forEach((value,key) => {
         this.tableContent.push(value)
       }); 
-      console.log(this.tableContent)
+      // console.log(this.tableContent)
     }
   }
 
@@ -59,7 +59,7 @@ export class TransactionhistoryComponent implements OnInit {
   fileEXPORTJSONDATABASE:any;
   download(t,type){
     // let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-    console.log("t",t,type)
+    // console.log("t",t,type)
     let filename = moment(new Date(t.timestamp)).unix()+"-CAS-Token-Distribution";
     if(type == "csv"){
       if(t.distributed == "single"){
@@ -75,12 +75,12 @@ export class TransactionhistoryComponent implements OnInit {
         this.fileEXPORTDATA = "";
         data.forEach((value,key) => {
           let resp = value.response?value.response:"Succeessful token transfer";
-          // console.log(value.address+","+value.tokens+","+value.hash+","+resp+"\n")
+          // // console.log(value.address+","+value.tokens+","+value.hash+","+resp+"\n")
           this.fileEXPORTDATA =this.fileEXPORTDATA + value.address+","+value.tokens+","+value.hash+","+resp+"\n";
-          // console.log(this.ddumdata)
+          // // console.log(this.ddumdata)
         });
-        console.log(this.fileEXPORTDATA)
-        // console.log(btoa(this.fileEXPORTDATA))
+        // console.log(this.fileEXPORTDATA)
+        // // console.log(btoa(this.fileEXPORTDATA))
         this.fileEXPORTDATABASE = btoa(this.fileEXPORTDATA);
         let val =  "data:text/csv;base64,"+this.fileEXPORTDATABASE;
         // let filename = moment(new Date(t.timestamp)).unix()+"-"+t.tokens+"-CAS-Token-Distribution";
@@ -102,7 +102,7 @@ export class TransactionhistoryComponent implements OnInit {
         };
         this.fileEXPORTDATABASE = btoa(JSON.stringify(jdata));
         let val =  "data:application/json;base64,"+this.fileEXPORTDATABASE;
-        // console.log(jdata,this.fileEXPORTDATABASE,val)
+        // // console.log(jdata,this.fileEXPORTDATABASE,val)
         this.downloadURI(val, filename+".json");
       } 
       else if(t.distributed == "multiple"){
@@ -110,17 +110,17 @@ export class TransactionhistoryComponent implements OnInit {
         this.fileEXPORTJSONDATA = [];
         data.forEach((value,key) => {
           let resp = value.response?value.response:"Succeessful token transfer";
-          // console.log(value.address+","+value.tokens+","+value.hash+","+resp+"\n")
+          // // console.log(value.address+","+value.tokens+","+value.hash+","+resp+"\n")
           this.fileEXPORTJSONDATA.push({
             toAddress:value.address,
             transactionHash:value.hash,
             tokens:value.tokens,
             notes:resp
           })
-          // console.log(this.ddumdata)
+          // // console.log(this.ddumdata)
         });
-        console.log(this.fileEXPORTJSONDATA)
-        // console.log(btoa(JSON.stringify(this.fileEXPORTJSONDATA)))
+        // console.log(this.fileEXPORTJSONDATA)
+        // // console.log(btoa(JSON.stringify(this.fileEXPORTJSONDATA)))
         this.fileEXPORTJSONDATABASE = btoa(JSON.stringify(this.fileEXPORTJSONDATA));
         let val =  "data:application/json;base64,"+this.fileEXPORTJSONDATABASE;
         // let filename = moment().unix()+"-"+t.tokens+"-CAS-Token-Distribution";

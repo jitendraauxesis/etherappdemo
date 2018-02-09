@@ -34,8 +34,8 @@ export class UserhomesinglemodelComponent implements OnInit {
   errormessage:string = '';
   successmessage:string = '';
 
-  viewAddress:string = 'https://ropsten.etherscan.io/address/';
-  viewHash:string = 'https://ropsten.etherscan.io/tx/';
+  viewAddress:string = 'https://etherscan.io/address/';//'https://ropsten.etherscan.io/address/';
+  viewHash:string = 'https://etherscan.io/tx/';
 
   constructor(
     public casService:CasService,
@@ -48,7 +48,7 @@ export class UserhomesinglemodelComponent implements OnInit {
   ngOnInit() {
     //fee
     this.SISFeeCalc = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFeeCalc")).toString());
-    console.log(this.SISFeeCalc);
+    // console.log(this.SISFeeCalc);
     
 
 
@@ -62,26 +62,26 @@ export class UserhomesinglemodelComponent implements OnInit {
     this.fromaddress =  this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress");
     
     if(this.SISFeeCalc.individual > this.SISFeeCalc.eth){
-      console.log("here eth")
+      // console.log("here eth")
       this.disablebtnfor = 'lesseth';
       this.errormessage += 'Ether balance is too low. ';
     }
     if(this.tokenstosend > this.SISFeeCalc.cas ){
-      console.log("here token")
+      // console.log("here token")
       this.disablebtnfor = 'lesstoken';
       this.errormessage += 'Tokens is more than you are transferring. ';
     } 
-    console.log(
-      this.tokenstosend,this.SISFeeCalc.cas,
-      this.SISFeeCalc.individual, this.SISFeeCalc.eth
-    )
+    // console.log(
+    //   this.tokenstosend,this.SISFeeCalc.cas,
+    //   this.SISFeeCalc.individual, this.SISFeeCalc.eth
+    // )
 
     // if(2>10){
-    //   console.log("less token")
-    // }else{console.log("grt token")}
+    //   // console.log("less token")
+    // }else{// console.log("grt token")}
     // if(0.002154336>0){
-    //   console.log("less/more eth")
-    // }else{console.log("grt token")}
+    //   // console.log("less/more eth")
+    // }else{// console.log("grt token")}
   }
 
   showmsg(msg){
@@ -120,15 +120,15 @@ export class UserhomesinglemodelComponent implements OnInit {
       //verifying address and private key
       try{
         let wallet = new ethers.Wallet(this.privatekey);
-        // console.log(wallet)
+        // // console.log(wallet)
         let address = wallet.address;
-        console.log(address,this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress"),this.fromaddress )
+        // console.log(address,this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress"),this.fromaddress )
         if(this.fromaddress == address){
           this.ngxloading  = true;
           this.sendTokens()
           .then(
             d=>{
-              console.log("PromiseMultiple:",d)
+              // console.log("PromiseMultiple:",d)
               let dt = JSON.parse(JSON.stringify(d));
               if(dt.status == "infail"){
                 this.snackBar.open(dt.message,'',{
@@ -155,7 +155,7 @@ export class UserhomesinglemodelComponent implements OnInit {
             },
             e=>{
               this.ngxloading  = false;
-              console.log(e)
+              // console.log(e)
               this.snackBar.open('Token transfer failed','',{
                 duration:2000
               });
@@ -191,55 +191,58 @@ export class UserhomesinglemodelComponent implements OnInit {
     let checkaddress = this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress");
     let checkpkey = this.mycryptoService.retrieveFromLocal("SISUPrivateKey");//this.privatekey;
 
-    // console.log("addrkey:",checkaddress,"\n",checkpkey,"\n",firstAdd,"privkey:\n",this.privatekey) 
+    // // console.log("addrkey:",checkaddress,"\n",checkpkey,"\n",firstAdd,"privkey:\n",this.privatekey) 
 
-    console.log(checkaddress)
+    // console.log(checkaddress)
     let creating_address = checkaddress;//this.fromaddress;
     let priv = this.privatekey;
     
+    var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
+            // console.log("contract:",contract,"\nCA::",ContractAddress)
+    var tt = tokens;
+    
+    tokens = this.web3.utils.toWei(tokens,'ether');
+    // console.log(tokens);
+    
+    tokens = tokens.toString('hex');
+    var hexdata = contract.methods.transfer(firstAdd,tokens)
+            .encodeABI();
+            // console.log("asdasdas", hexdata);
+
     // var gasLimit = this.web3.eth.estimateGas({ 
     //   to: creating_address, // data: '0x' + bytecode, 
-    //   data: ContractData, // from: wallet.address, 
+    //   data: hexdata, // from: wallet.address, 
     // }).then(
     //   valgas =>{  
-        // console.log("gasLimit:",valgas)
-        // console.log(gasLimit)
+        // // console.log("gasLimit:",valgas)
+        // // console.log(gasLimit)
         var gasLimit = 1302200;//valgas;//
         const gasPrice = this.web3.eth.getGasPrice();//1800000000;
-        // console.log("gasPrice:",gasPrice);
+        // // console.log("gasPrice:",gasPrice);
         const nonce = this.web3.eth.getTransactionCount(creating_address);
 
         var nonceHex;
         Promise.all([gasPrice,nonce])
         .then(
           (d)=>{
-            console.log("gasPricePromise:",d)
+            // console.log("gasPricePromise:",d)
             const gasPriceHex = this.web3.utils.toHex(d[0]);
             const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
             var nonceHex = this.web3.utils.toHex(d[1]);
             
-            var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
-            console.log("contract:",contract,"\nCA::",ContractAddress)
             
 
             contract.methods.balanceOf(creating_address)
             .call((err, ress)=>{ 
-              console.log("ERR:",err, "Response BAL:", ress); 
+              // console.log("ERR:",err, "Response BAL:", ress); 
             })
-            var tt = tokens;
             
-            tokens = this.web3.utils.toWei(tokens,'ether');
-            console.log(tokens);
-            
-            tokens = tokens.toString('hex');
-            console.log(tokens);
+            // console.log(tokens);
 
             // tokens = tokens*Math.pow(10,-18);
-            // console.log(tokens)
+            // // console.log(tokens)
 
-            var hexdata = contract.methods.transfer(firstAdd,tokens)
-            .encodeABI();
-            console.log("asdasdas", hexdata);
+            
 
             
             const rawTx = {
@@ -250,7 +253,7 @@ export class UserhomesinglemodelComponent implements OnInit {
               to: ContractAddress
             };
             const tx = new Tx(rawTx);
-            console.log("rawTX:", tx.serialize().toString('hex'),rawTx);
+            // console.log("rawTX:", tx.serialize().toString('hex'),rawTx);
             var pk = priv.toString();
             pk = pk.substr(2,pk.length);
             var pk2 = Buffer.Buffer.from(pk,'hex');
@@ -258,13 +261,13 @@ export class UserhomesinglemodelComponent implements OnInit {
             const serializedTx = tx.serialize();
             this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
             .on('transactionHash', (hash)=>{
-                console.log(hash)
+                // console.log(hash)
                 this.successmessage = tt+' tokens has been transfer to '+'<a class="alink" href="'+this.viewAddress+firstAdd+'" target="_blank">'+firstAdd+'</a> with transaction hash <a class="alink" href="'+this.viewHash+hash+'" target="_blank">'+hash+'</a>.';
               
                 let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
-                console.log(ddata)
+                // console.log(ddata)
                 if(ddata == null || ddata == ""){
-                  console.log("no receipts")
+                  // console.log("no receipts")
                   this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify([{
                     id:1,
                     fromaddress:creating_address,
@@ -276,16 +279,16 @@ export class UserhomesinglemodelComponent implements OnInit {
                   }])); 
                 }else{
                   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-                  console.log(ddata,this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
+                  // console.log(ddata,this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
                   // this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(p))
-                  // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
+                  // // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
                   let dth = hash;
                   let find = _.find(ddata, function(o) { if(o.transactionHash == dth){ return o; } });
                   if(find == dth){
-                    console.log("donothing")
+                    // console.log("donothing")
                   }else{
                     let max = _.maxBy(ddata, function(o) { return o.id; });
-                    console.log(max,max.id)
+                    // console.log(max,max.id)
                     let maxid = max.id+1;
                     let distribute = {
                       id:maxid,
@@ -300,16 +303,16 @@ export class UserhomesinglemodelComponent implements OnInit {
                     let arr = [];
                     // arr.push(ddata);
                     let pp = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists").toString()));
-                    // console.log(pp)
+                    // // console.log(pp)
                     pp.forEach((value,key) => {
-                      // console.log(value,key)
+                      // // console.log(value,key)
                       arr.push(value)
                     });
                     arr.push(distribute);
-                    // console.log(arr)
+                    // // console.log(arr)
                     this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
                     let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-                    console.log(dd1)
+                    // console.log(dd1)
                   }
                 }
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsJSON",JSON.stringify({
@@ -322,14 +325,14 @@ export class UserhomesinglemodelComponent implements OnInit {
                 
             })
             // .on('receipt', (dd)=>{
-            //   console.log('receipt',dd)
+            //   // console.log('receipt',dd)
             //   // this.successmessage = tt+' tokens has been transfer to '+firstAdd+' with '+dd.transactionHash+'.';
             //   // this.mycryptoService.saveToLocal("SISContractBlockHash",dd.blockHash);
             //   // this.mycryptoService.saveToLocal("SISContractAddress",dd.contractAddress);
             //   // this.mycryptoService.saveToLocal("SISContractTxHash",dd.transactionHash);
             //   // this.mycryptoService.saveToLocal("SISContractReceiptDetail",JSON.stringify(dd));
               
-            //   console.log(dd)
+            //   // console.log(dd)
 
               
 
@@ -348,18 +351,18 @@ export class UserhomesinglemodelComponent implements OnInit {
 
             //   // contract.methods.balanceOf(creating_address)
             //   // .call((err, ress)=>{ 
-            //   //   console.log("ERR:",err, "Balance:", ress); 
+            //   //   // console.log("ERR:",err, "Balance:", ress); 
             //   // })
 
               
             // })
             .on('error',(ee)=>{
               // this.ngxloading  = false;
-              console.log('error:',ee)
+              // console.log('error:',ee)
               let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
-                console.log(ddata)
+                // console.log(ddata)
                 if(ddata == null || ddata == ""){
-                  console.log("no receipts")
+                  // console.log("no receipts")
                   this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify([{
                     id:1,
                     fromaddress:creating_address,
@@ -374,14 +377,14 @@ export class UserhomesinglemodelComponent implements OnInit {
                   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
                   
                   // this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(p))
-                  // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
+                  // // console.log("topush",this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
                   let dth = null;
                   let find = _.find(ddata, function(o) { if(o.transactionHash == dth){ return o; } });
                   if(find == dth){
-                    console.log("donothing")
+                    // console.log("donothing")
                   }else{
                     let max = _.maxBy(ddata, function(o) { return o.id; });
-                    console.log(max,max.id)
+                    // console.log(max,max.id)
                     let maxid = max.id+1;
                     let distribute = {
                       id:maxid,
@@ -397,10 +400,10 @@ export class UserhomesinglemodelComponent implements OnInit {
                     let arr = [];
                     // arr = ddata;
                     arr.push(distribute);
-                    // console.log(arr)
+                    // // console.log(arr)
                     this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
                     let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-                    console.log(dd1)
+                    // console.log(dd1)
                   }
                 }
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsJSON",JSON.stringify({
@@ -431,24 +434,24 @@ export class UserhomesinglemodelComponent implements OnInit {
   download(type){
     let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsJSON")).toString());
     if(type == "csv"){
-      console.log("type",type,data)
+      // console.log("type",type,data)
       let resp = data.response?data.response:"Succeessful token transfer";
 
       this.fileEXPORTDATA = data.toAddress+","+data.tokens+","+data.transactionHash+","+resp;
-      console.log(this.fileEXPORTDATA)
-      console.log(btoa(this.fileEXPORTDATA))
+      // console.log(this.fileEXPORTDATA)
+      // console.log(btoa(this.fileEXPORTDATA))
 
       this.fileEXPORTDATABASE = btoa(this.fileEXPORTDATA);
       let val =  "data:text/csv;base64,"+this.fileEXPORTDATABASE;
       let filename = moment().unix()+"-"+this.tokenstosend+"-CAS-Token-Distribution";
       this.downloadURI(val, filename+".csv");
     }else if(type == "json"){
-      console.log("type",type,data)
+      // console.log("type",type,data)
 
       this.fileEXPORTJSONDATA = data;
 
-      console.log(this.fileEXPORTJSONDATA)
-      console.log(btoa(JSON.stringify(this.fileEXPORTJSONDATA)))
+      // console.log(this.fileEXPORTJSONDATA)
+      // console.log(btoa(JSON.stringify(this.fileEXPORTJSONDATA)))
       this.fileEXPORTJSONDATABASE = btoa(JSON.stringify(this.fileEXPORTJSONDATA));
       let val =  "data:application/json;base64,"+this.fileEXPORTJSONDATABASE;
       let filename = moment().unix()+"-"+this.tokenstosend+"-CAS-Token-Distribution";

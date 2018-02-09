@@ -305,7 +305,7 @@ export class UserhomemodelComponent implements OnInit {
                         const gasPriceHex = this.web3.utils.toHex(d[0]);
                         const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
                         // globalnonce = globalnonce++;
-                        console.log(globalnonce)
+                        // console.log(globalnonce)
                         var nonceHex = this.web3.utils.toHex(globalnonce++);
                         // globalnonce = d[1];
                         // // console.log("contract:",contract,"\nCA::",ContractAddress)
@@ -364,7 +364,7 @@ export class UserhomemodelComponent implements OnInit {
                             let akey = key+1;
                             if(incr == akey){
                               // this.ngxloading  = false;
-                              console.log("I append data "+incr+" "+akey,appendDATAHASHES)
+                              // console.log("I append data "+incr+" "+akey,appendDATAHASHES)
                               resolve({status:"success",data:appendDATAHASHES});
                             }
                             // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");

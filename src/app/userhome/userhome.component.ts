@@ -488,7 +488,7 @@ export class UserhomeComponent implements OnInit {
       this.mycryptoService.saveToLocal("SISContractABI",JSON.stringify(abi));
       // this.mycryptoService.saveToLocal("SISContractByteCode",bytecode);
       // this.mycryptoService.saveToLocal("SISContractData",contractData);
-      // this.mycryptoService.saveToLocal("SISContractAddress","0xe8780B48bdb05F928697A5e8155f672ED91462F7");
+      this.mycryptoService.saveToLocal("SISContractAddress","0xe8780B48bdb05F928697A5e8155f672ED91462F7");//"0xe8780B48bdb05F928697A5e8155f672ED91462F7");
     }else{ 
       // console.log("contract detail already stored")
     }
@@ -598,11 +598,11 @@ export class UserhomeComponent implements OnInit {
     
     this.mycryptoService.saveToLocal("SISUAddress","0xcD0f4B8aC1079E894394448880B90e23d1a7C72e");
     this.mycryptoService.saveToLocal("SISUPrivateKey","bff6ee37dd35f9adc1bb26c0dce1149468cf70f130393f2376c9ef41d0e6fa32");
-    this.mycryptoService.saveToLocal("SISContractAddress","0x11dc5a650e1e2a32c336fa73439e7cc035976c06");
+    this.mycryptoService.saveToLocal("SISContractAddress","0xe8780B48bdb05F928697A5e8155f672ED91462F7");
 
     let add = this.mycryptoService.retrieveFromLocal("SISUAddress");
     var priv = this.mycryptoService.retrieveFromLocal("SISUPrivateKey");
-    console.log(add,priv)
+    // console.log(add,priv)
   }
 
   /***
@@ -670,8 +670,9 @@ export class UserhomeComponent implements OnInit {
       this.mycryptoService.saveToLocal("SISTokenTransferTokens",this.singletokens);
       this.mycryptoService.saveToLocal("SISTokenTransferFromAddress",this.singlefromaddress);
 
+      this.mycryptoService.saveToLocal("SISContractAddress","0xe8780B48bdb05F928697A5e8155f672ED91462F7");
 
-      var contract = new web3.eth.Contract(JSON.parse(ContractABI.toString()),"0x11dc5a650e1e2a32c336fa73439e7cc035976c06");
+      var contract = new web3.eth.Contract(JSON.parse(ContractABI.toString()),"0xe8780B48bdb05F928697A5e8155f672ED91462F7");//"0x11dc5a650e1e2a32c336fa73439e7cc035976c06");
       // console.log(contract,ContractAddress)
       var gasLimit = web3.eth.estimateGas({ 
         to: firstAdd, // data: '0x' + bytecode, 
