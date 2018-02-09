@@ -62,6 +62,7 @@ import { UserhomemodelComponent } from './userhomemodel/userhomemodel.component'
 import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
 import { UserhomesinglemodelComponent } from './userhomesinglemodel/userhomesinglemodel.component';
 import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
+import { SettingsComponent } from './settings/settings.component';
 
 
 
@@ -113,7 +114,8 @@ export class DemoMaterialModule {}
     UserhomemodelComponent,
     UserhomecsvdetailComponent,
     UserhomesinglemodelComponent,
-    TransactionhistoryComponent
+    TransactionhistoryComponent,
+    SettingsComponent
   ],
   entryComponents: [
     UserhomemodelComponent,

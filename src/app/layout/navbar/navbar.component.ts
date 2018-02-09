@@ -26,4 +26,8 @@ export class NavbarComponent implements OnInit {
   history(){
     this.router.navigateByUrl("/history");    
   }
+
+  settings(){
+    this.router.navigateByUrl("/settings");  
+  }
 }

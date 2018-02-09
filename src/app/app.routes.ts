@@ -7,6 +7,7 @@ import { NavbarComponent } from './layout/navbar/navbar.component';
 import { UserhomeComponent } from './userhome/userhome.component';
 import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
 import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes:Routes = [
     /**
@@ -32,6 +33,10 @@ const routes:Routes = [
     {
         path: "history",
         component: TransactionhistoryComponent
+    },
+    {
+        path: "settings",
+        component: SettingsComponent
     },
     {
         path: "**",
