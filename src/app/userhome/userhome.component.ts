@@ -72,7 +72,7 @@ export class UserhomeComponent implements OnInit {
 
     // let ddata = (this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString();
     // // console.log(ddata)  
-    let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsJSON")).toString());
+    // let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsJSON")).toString());
     // console.log(data)  
 
 
@@ -341,7 +341,7 @@ export class UserhomeComponent implements OnInit {
           duration:1000
         });
       }
-    }
+    } 
   }
 
   openModal(){

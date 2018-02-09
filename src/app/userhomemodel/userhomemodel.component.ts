@@ -97,6 +97,8 @@ export class UserhomemodelComponent implements OnInit {
     //   this.totalTXTokens,this.SISFeeCalc.cas,
     //   this.SISFeeCalc.individual, this.SISFeeCalc.eth
     // )
+
+    // this.privatekey = "0xba100b9f412d1283a88fff1c9c7c42c70883c9a8ca1cf17c4496f5e49caa48a0";//"0xbff6ee37dd35f9adc1bb26c0dce1149468cf70f130393f2376c9ef41d0e6fa32";
   }
 
   next(arg){
@@ -268,7 +270,7 @@ export class UserhomemodelComponent implements OnInit {
       // });
       var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
       const gasPrice = this.web3.eth.getGasPrice();//1800000000;
-      var gasLimit = 1302200;
+      // var gasLimit = 1302200;
                                             
       const nonce = this.web3.eth.getTransactionCount(creating_address);
       nonce.then(
@@ -280,6 +282,7 @@ export class UserhomemodelComponent implements OnInit {
           //   data: ContractData, // from: wallet.address, 
           // }).then(
           //   valgas =>{ 
+              var gasLimit = 1302200;//valgas;
               csvfor.forEach((value,key) => {
                 // for(let key=0;key<value.length;key++){
                 // // console.log(value,key,value[key],value[key].address,value[key].tokens)
@@ -343,62 +346,62 @@ export class UserhomemodelComponent implements OnInit {
                         tx.sign(pk2);
                         const serializedTx = tx.serialize();
                         this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
-                        // .on('transactionHash', (hash)=>{
-                        //     // console.log(hash)
-                        //     // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
-                        //     stringhashes += hash+',';
-                        //     let aa = {
-                        //       position:key,
-                        //       // address:value[0],
-                        //       tokens:value.tokens,
-                        //       address:value.address, 
-                        //       hash:hash,
-                        //       response:"Successful token transfer"
-                        //     };
-                        //     appendDATAHASHES.push(aa); 
-                        //     // // console.log("appendDATAHASHES",appendDATAHASHES)
-                        //     // // console.log(incr,key);
-                        //     let akey = key+1;
-                        //     if(incr == akey){
-                        //       // this.ngxloading  = false;
-                        //       console.log("I append data "+incr+" "+akey,appendDATAHASHES)
-                        //       // resolve({status:"success",data:appendDATAHASHES});
-                        //     }
-                        //     // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
-                        //     // // console.log(ddata)
-                        //     // if(ddata ==null || ddata == ""){
-                        //     //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
-                        //     // }else{
-                        //     //   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
-                        //     //   let arr = [];
-                        //     //   ddata.forEach((value,key) => {
+                        .on('transactionHash', (hash)=>{
+                            // console.log(hash)
+                            // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
+                            stringhashes += hash+',';
+                            let aa = {
+                              position:key,
+                              // address:value[0],
+                              tokens:value.tokens,
+                              address:value.address, 
+                              hash:hash,
+                              response:"Successful token transfer"
+                            };
+                            appendDATAHASHES.push(aa); 
+                            // // console.log("appendDATAHASHES",appendDATAHASHES)
+                            // // console.log(incr,key);
+                            let akey = key+1;
+                            if(incr == akey){
+                              // this.ngxloading  = false;
+                              console.log("I append data "+incr+" "+akey,appendDATAHASHES)
+                              resolve({status:"success",data:appendDATAHASHES});
+                            }
+                            // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
+                            // // console.log(ddata)
+                            // if(ddata ==null || ddata == ""){
+                            //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
+                            // }else{
+                            //   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
+                            //   let arr = [];
+                            //   ddata.forEach((value,key) => {
                                 
-                        //     //   });
-                        //     //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
-                        //     // }
+                            //   });
+                            //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
+                            // }
                             
-                        // })
-                        .on('receipt',(receipt)=>{
-                          console.log(receipt) 
-                          stringhashes += receipt.transactionHash+',';
-                          let aa = {
-                            position:key,
-                            // address:value[0],
-                            tokens:value.tokens,
-                            address:value.address, 
-                            hash:receipt.transactionHash,
-                            response:"Successful token transfer"
-                          };
-                          appendDATAHASHES.push(aa); 
-                          // // console.log("appendDATAHASHES",appendDATAHASHES)
-                          // // console.log(incr,key);
-                          let akey = key+1;
-                          if(incr == akey){
-                            // this.ngxloading  = false;
-                            console.log("I append data "+incr+" "+akey,appendDATAHASHES)
-                            // resolve({status:"success",data:appendDATAHASHES});
-                          } 
                         })
+                        // .on('receipt',(receipt)=>{
+                        //   console.log(receipt) 
+                        //   stringhashes += receipt.transactionHash+',';
+                        //   let aa = {
+                        //     position:key,
+                        //     // address:value[0],
+                        //     tokens:value.tokens,
+                        //     address:value.address, 
+                        //     hash:receipt.transactionHash,
+                        //     response:"Successful token transfer"
+                        //   };
+                        //   appendDATAHASHES.push(aa); 
+                        //   // // console.log("appendDATAHASHES",appendDATAHASHES)
+                        //   console.log(incr,key);
+                        //   let akey = key+1;
+                        //   if(incr == akey){
+                        //     // this.ngxloading  = false;
+                        //     console.log("I append data "+incr+" "+akey,appendDATAHASHES)
+                        //     resolve({status:"success",data:appendDATAHASHES});
+                        //   } 
+                        // })
                         .on('error',(ee)=>{
                           // this.ngxloading  = false;
                           // // console.log('error:',ee,JSON.stringify(ee))

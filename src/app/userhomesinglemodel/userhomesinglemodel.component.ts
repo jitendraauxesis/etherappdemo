@@ -193,17 +193,18 @@ export class UserhomesinglemodelComponent implements OnInit {
 
     // console.log("addrkey:",checkaddress,"\n",checkpkey,"\n",firstAdd,"privkey:\n",this.privatekey) 
 
+    console.log(checkaddress)
     let creating_address = checkaddress;//this.fromaddress;
     let priv = this.privatekey;
     
-    var gasLimit = this.web3.eth.estimateGas({ 
-      to: creating_address, // data: '0x' + bytecode, 
-      data: ContractData, // from: wallet.address, 
-    }).then(
-      valgas =>{ 
-        console.log("gasLimit:",valgas)
+    // var gasLimit = this.web3.eth.estimateGas({ 
+    //   to: creating_address, // data: '0x' + bytecode, 
+    //   data: ContractData, // from: wallet.address, 
+    // }).then(
+    //   valgas =>{  
+        // console.log("gasLimit:",valgas)
         // console.log(gasLimit)
-        var gasLimit = valgas;//1302200;
+        var gasLimit = 1302200;//valgas;//
         const gasPrice = this.web3.eth.getGasPrice();//1800000000;
         // console.log("gasPrice:",gasPrice);
         const nonce = this.web3.eth.getTransactionCount(creating_address);
@@ -416,8 +417,8 @@ export class UserhomesinglemodelComponent implements OnInit {
             
           }
         )
-      }
-    );
+    //   }
+    // );
 
     
     })
