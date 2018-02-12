@@ -37,9 +37,9 @@ export class UserhomecsvdetailComponent implements OnInit {
     }else{
 
       let dt = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFileUploadContent")).toString());
-      console.log(dt,this.csvData,dt.csvData.length)
+      // console.log(dt,this.csvData,dt.csvData.length)
       this.fileData = dt.filedata.ufile;
-      console.log(this.fileData)
+      // console.log(this.fileData)
       if(dt.csvData.length == 0){
         this.router.navigateByUrl("/home");
       }else if(this.haveFileError(dt.csvData,this.web3)){

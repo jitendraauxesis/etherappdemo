@@ -2,3 +2,11 @@ mat-card.panelcard.mat-card mat-card-content {
     font-size: 20px;
 }
 
+mat-row.mat-row {
+    background-color: lightcyan;
+}
+
+mat-cell.matctokens {
+    background-color: cornsilk;
+    padding: 4px;
+}
