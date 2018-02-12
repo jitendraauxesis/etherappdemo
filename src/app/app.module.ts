@@ -136,7 +136,7 @@ export class DemoMaterialModule {}
       primaryColour: '#ffffff', 
       secondaryColour: '#ffffff', 
       tertiaryColour: '#ffffff'
-  })
+    })
   ],
   providers: [
     {
