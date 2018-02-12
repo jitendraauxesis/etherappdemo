@@ -86,7 +86,7 @@
             <div class="errmsg">{{errormessage}}</div>
             <button mat-button class="cancelbtn" mat-dialog-close>Cancel</button>
           <!-- <button mat-button [mat-dialog-close]="true">Next</button> -->
-          <button mat-button class="nextbtn" (click)="next(1)">Next</button>
+          <button mat-button class="nextbtn" *ngIf="disablebtnfor != 'lesstoken' && disablebtnfor != 'lesseth'"  (click)="next(1)">Next</button>
           <button mat-button class="errorbtn" disabled *ngIf="disablebtnfor == 'lesstoken'" (click)="showmsg('lesstoken')">Next</button>
           <button mat-button class="errorbtn" disabled *ngIf="disablebtnfor == 'lesseth'" (click)="showmsg('lesseth')">Next</button>
           

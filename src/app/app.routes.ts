@@ -16,31 +16,38 @@ const routes:Routes = [
     {
         path: "",
         component: UserhomeComponent,
-        pathMatch: "full"
+        pathMatch: "full",
+        data: { title: 'Home | CAS Distribution' }
     },
     {
         path: "home",
-        component: UserhomeComponent
+        component: UserhomeComponent,
+        data: { title: 'Home | CAS Distribution' }
     },
     {
         path: "welcome",
-        component: WelcomeComponent
+        component: WelcomeComponent,
+        data: { title: 'Home | CAS Distribution' }
     },
     {
         path: "csv/detail",
-        component: UserhomecsvdetailComponent
+        component: UserhomecsvdetailComponent,
+        data: { title: 'CSV Detail | CAS Distribution' }
     },
     {
         path: "history",
-        component: TransactionhistoryComponent
+        component: TransactionhistoryComponent,
+        data: { title: 'History | CAS Distribution' }
     },
     {
         path: "settings",
-        component: SettingsComponent
+        component: SettingsComponent,
+        data: { title: 'Settings | CAS Distribution' }
     },
     {
         path: "**",
-        component: UserhomeComponent
+        component: UserhomeComponent,
+        data: { title: 'Home | CAS Distribution' }
     }
     /**
      * Old urls

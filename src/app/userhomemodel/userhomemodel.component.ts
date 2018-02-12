@@ -77,7 +77,7 @@ export class UserhomemodelComponent implements OnInit {
 
     this.csvParseDetail = rows;
 
-    console.log(this.csvParseDetail)
+    // console.log(this.csvParseDetail)
 
     //fee
     this.SISFeeCalc = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFeeCalc")).toString());
