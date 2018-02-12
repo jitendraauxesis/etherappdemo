@@ -12,7 +12,10 @@
       OR
       <br>
       <!-- <mat-form-field class="example-full-width"> -->
-        <input type="file" accept=".csv" id="ufile" name="ufile" (change)="fileChangeListener($event)" #csvfile>
+      <label class="fileContainer">
+        
+        <input type="file" accept=".csv" id="ufile" class="inputfile" name="ufile" (change)="fileChangeListener($event)" #csvfile>
+      </label>
       <!-- </mat-form-field> -->
       <br>
       <mat-form-field class="example-full-width" style="margin-top:4%">
@@ -33,13 +36,13 @@
         <mat-card-subtitle>Below address field are required to send CAS tokens</mat-card-subtitle>
         <mat-card-content>
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="To address" value="" [(ngModel)]="singleaddress" #singleaddr>
+            <input matInput placeholder="To address" [(ngModel)]="singleaddress" #singleaddr>
           </mat-form-field>
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="From address" value="" [(ngModel)]="singlefromaddress" #singlefrmaddr>
+            <input matInput placeholder="From address" [(ngModel)]="singlefromaddress" #singlefrmaddr>
           </mat-form-field>
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="CAS Tokens" value="" [(ngModel)]="singletokens" #singletkns>
+            <input matInput placeholder="CAS Tokens" [(ngModel)]="singletokens" #singletkns>
           </mat-form-field>
           <div class="singleformdiv">
               <button class="uploadbtn" mat-raised-button (click)="singlenext()">

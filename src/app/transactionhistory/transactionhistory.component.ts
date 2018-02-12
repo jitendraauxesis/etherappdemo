@@ -11,6 +11,7 @@ import { ConstantsService } from '../interfaces/constants.service';
 import { UserhomesinglemodelComponent } from '../userhomesinglemodel/userhomesinglemodel.component';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-transactionhistory',
@@ -29,6 +30,7 @@ export class TransactionhistoryComponent implements OnInit {
     public mycryptoService:MycryptoService,
     public casService:CasService,
     public dialog: MatDialog,
+    public router:Router
   ) { }
 
   ngOnInit() {
@@ -148,4 +150,8 @@ export class TransactionhistoryComponent implements OnInit {
     delete this.link;
   }
 
+  viewbtn(t){
+    console.log(t)
+    this.router.navigate(["history/view",t.id]);
+  }
 }

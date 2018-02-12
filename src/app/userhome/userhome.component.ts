@@ -249,7 +249,7 @@ export class UserhomeComponent implements OnInit {
     let value = csv;
     for(let key=0;key<value.length;key++){  
         // // console.log(value[key][0],value.length)
-        console.log(web3.utils.isAddress(value[key][0]),value[key][1])
+        // console.log(web3.utils.isAddress(value[key][0]),value[key][1])
         if(web3.utils.isAddress(value[key][0]) && (value[key][1]!=0||value[key][1]!="0")){
           // // console.log(value,key)
           error = 0;
@@ -272,7 +272,7 @@ export class UserhomeComponent implements OnInit {
       let csv = this.csvRecords;
       // // console.log(csv);
       let a = this.haveFileError(csv,web3);
-      console.log(a,"a")
+      // console.log(a,"a")
       if(a==1){
         this.ngxloading  = false;
         this.snackBar.open('The file content is wrong. Correct it.','Undo',{
@@ -494,6 +494,7 @@ export class UserhomeComponent implements OnInit {
     }else{ 
       // console.log("contract detail already stored")
     }
+    // console.log(this.mycryptoService.retrieveFromLocal("SISContractABI"))
       //  contract.methods.balanceOf("0x6f0f9babd45e9bb786f9a736a14d555b48e85104")
       //  .call(
       //    (err,bal)=>{

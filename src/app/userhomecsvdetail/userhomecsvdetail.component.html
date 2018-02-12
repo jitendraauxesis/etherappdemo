@@ -13,7 +13,7 @@
 </mat-card>
 <mat-card>
   <mat-card-content>
-    <mat-table #table [dataSource]="dataSource">
+    <mat-table class="csvtable" #table [dataSource]="dataSource">
 
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
@@ -21,13 +21,13 @@
       <!-- Position Column -->
       <ng-container matColumnDef="position">
         <mat-header-cell class="mhcno" *matHeaderCellDef> No. </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
+        <mat-cell class="matcno" *matCellDef="let element"> {{element.position}} </mat-cell>
       </ng-container>
 
       <!-- Address Column -->
       <ng-container class="containeraddress" matColumnDef="address">
         <mat-header-cell class="mhcaddress" *matHeaderCellDef> Address </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
+        <mat-cell class="matcaddress" *matCellDef="let element"> {{element.address}} </mat-cell>
       </ng-container>
 
       <!-- Tokens Column -->

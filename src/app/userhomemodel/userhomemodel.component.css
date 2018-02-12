@@ -83,6 +83,7 @@ button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
 }
 .errmsg {
     color: #ff6666;
+    text-align: center;
     margin-bottom: 4%;
 }
 
@@ -108,4 +109,24 @@ button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
     /* background-color: #794044;
     color: #fff; */
     cursor: pointer;
+}
+
+
+mat-card.modelcard.mat-card {
+    padding: 5px;
+    margin-left: 2%;
+    margin-right: 2%;
+    /* margin-top: 2%; */
+}
+
+mat-card-content div.table-responsive.divtable table tbody tr th {
+    padding-top: 2%;
+}
+
+mat-card-content div.table-responsive.divtable table tbody tr td {
+    padding-top: 2.0%;
+} 
+
+mat-card-content div.table-responsive.divtable table tbody tr {
+    border-top: 1px solid silver;
 }

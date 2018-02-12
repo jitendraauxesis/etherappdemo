@@ -84,6 +84,7 @@ button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
 }
 .errmsg {
     color: #ff6666;
+    text-align: center;
     margin-bottom: 4%;
 }
 
@@ -113,4 +114,16 @@ a.alink,a:-webkit-any-link {
     color: #3f51b5;
     text-decoration: none;
     cursor: pointer;
+}
+
+mat-card-content div.table-responsive.divtable table tbody tr th {
+    padding-top: 2.5%;
+}
+ 
+mat-card-content div.table-responsive.divtable table tbody tr td {
+    padding-top: 2.5%;
+} 
+
+mat-card-content div.table-responsive.divtable table tbody tr {
+    border-top: 1px solid silver;
 }

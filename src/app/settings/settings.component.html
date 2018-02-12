@@ -5,14 +5,24 @@
   <mat-card-content>
     <div class="tablecontent">
 
-      <form class="example-form">
+      <form [formGroup]="uploadForm" class="example-form tcontract">
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Favorite food" value="Sushi">
+          <input matInput class="contractaddr" placeholder="Contract Address" [(ngModel)]="contractAddress" formControlName="contractAddress">
         </mat-form-field>
 
         <mat-form-field class="example-full-width">
-          <textarea matInput placeholder="Leave a comment"></textarea>
+          <textarea matInput class="contractabi" placeholder="Contract ABI" rows=8 [(ngModel)]="contractABI" formControlName="contractABI"></textarea>
         </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <textarea matInput class="contractcode" placeholder="Contract Bytecode" rows=8 [(ngModel)]="contractCode" formControlName="contractCode"></textarea>
+        </mat-form-field>
+
+        <!-- <mat-form-field class="example-full-width"> -->
+          <button class="submitbtn" mat-raised-button (click)="submit()">
+              Update&nbsp;&nbsp;<mat-icon>save</mat-icon> 
+          </button> 
+        <!-- </mat-form-field> -->
       </form>
     </div>
   </mat-card-content>

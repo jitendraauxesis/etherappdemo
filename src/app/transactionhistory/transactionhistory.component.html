@@ -11,6 +11,7 @@
             <th>Transaction Type</th>
             <th>Time</th>
             <th>Action</th>
+            <th>View</th>
           </tr>
         </thead>
         <tbody>
@@ -28,6 +29,9 @@
             <td>
                 <img src="assets/lib/image/csv.png" class="csvbtn" (click)="download(t,'csv')">
                 <img src="assets/lib/image/json-file.png" class="jsonbtn" (click)="download(t,'json')">
+            </td>
+            <td>
+                <img src="assets/lib/image/view.png" class="eyebtn" (click)="viewbtn(t)">
             </td>
           </tr>
         </tbody>

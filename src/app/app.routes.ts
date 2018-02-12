@@ -8,6 +8,7 @@ import { UserhomeComponent } from './userhome/userhome.component';
 import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetail.component';
 import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
 import { SettingsComponent } from './settings/settings.component';
+import { HistorydetailComponent } from './historydetail/historydetail.component';
 
 const routes:Routes = [
     /**
@@ -37,6 +38,11 @@ const routes:Routes = [
     {
         path: "history",
         component: TransactionhistoryComponent,
+        data: { title: 'History | CAS Distribution' }
+    },
+    {
+        path: "history/view/:id",
+        component: HistorydetailComponent,
         data: { title: 'History | CAS Distribution' }
     },
     {
