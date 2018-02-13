@@ -37,7 +37,6 @@ export class SettingdialogComponent implements OnInit {
       });
     }else if(this.name == this.data.name){
       //continue
-      this.dialogRef.close();
       this.snackBar.open("Continuing...",'Undo',{
         duration:2000
       });
