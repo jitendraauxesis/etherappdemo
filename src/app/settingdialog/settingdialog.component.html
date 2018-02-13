@@ -5,7 +5,7 @@
       <mat-form-field>
         <input matInput [(ngModel)]="name" placeholder="Name of your favourite company?">
       </mat-form-field>
-      <button mat-raised-button class="submitbtn" (click)="check()">Let Me In</button>
+      <button mat-raised-button class="submitbtn" [mat-dialog-close]="true" (click)="check()">Let Me In</button>
     </mat-card-content>
 </mat-card>
 </div>

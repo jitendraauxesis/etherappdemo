@@ -6,7 +6,7 @@ import { MycryptoService } from '../service/mycrypto.service';
 import { CasService } from '../service/cas.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { Router } from '@angular/router';
-
+import 'rxjs/add/operator/map';
 @Component({
   selector: 'app-settingdialog',
   templateUrl: './settingdialog.component.html',
@@ -26,6 +26,19 @@ export class SettingdialogComponent implements OnInit {
 
   ngOnInit() {
     // console.log(this.data.name)
+    // this.dialogRef.afterClosed().subscribe(result=>{
+    //   console.log(result)
+    //     if(result  == true){
+    //       // console.log(result)
+    //     }else 
+    //     if(result == undefined || result == null || result == ""){
+    //       this.router.navigateByUrl("/home");
+    //       // console.log(result)
+    //     } 
+    //     else{
+    //       this.router.navigateByUrl("/home");
+    //     }
+    // })
   }
 
   check(){
@@ -37,7 +50,22 @@ export class SettingdialogComponent implements OnInit {
       });
     }else if(this.name == this.data.name){
       //continue
-      this.snackBar.open("Continuing...",'Undo',{
+      // this.dialogRef.afterClosed().switchMap(result);
+      // this.dialogRef.close(); 
+      this.dialogRef.afterClosed().subscribe(result=>{
+        console.log(result)
+          if(result  == true){
+            // console.log(result)
+          }else if(result == undefined || result == null || result == ""){
+            this.router.navigateByUrl("/home");
+            // console.log(result)
+          } 
+          else{
+            this.router.navigateByUrl("/home");
+          }
+      })
+      // this.dialogRef.afterClosed().subscribe(result => true);
+      this.snackBar.open("Continuing...",'',{
         duration:2000
       });
     }else{
