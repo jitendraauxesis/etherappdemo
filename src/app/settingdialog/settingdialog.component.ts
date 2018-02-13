@@ -53,7 +53,7 @@ export class SettingdialogComponent implements OnInit {
       // this.dialogRef.afterClosed().switchMap(result);
       // this.dialogRef.close(); 
       this.dialogRef.afterClosed().subscribe(result=>{
-        console.log(result)
+        console.log("result",result)
           if(result  == true){
             // console.log(result)
           }else if(result == undefined || result == null || result == ""){

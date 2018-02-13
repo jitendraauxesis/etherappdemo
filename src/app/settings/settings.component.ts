@@ -48,18 +48,17 @@ export class SettingsComponent implements OnInit {
       data: { name: 'auxesis_cashaa' },
       hasBackdrop: true 
     })
-    // dialog.afterClosed().subscribe(result => {
-    //   // if(result  == true){
-    //   //   // console.log(result)
-    //   // }else 
-    //   if(result == undefined || result == null || result == ""){
-    //     this.router.navigateByUrl("/home");
-    //     // console.log(result)
-    //   } 
-    //   // else{
-    //   //   this.router.navigateByUrl("/home");
-    //   // }
-    // });
+    dialog.afterClosed().subscribe(result => {
+      if(result  == true){
+        // console.log(result)
+      }else 
+      if(result == undefined || result == null || result == ""){
+        this.router.navigateByUrl("/home");
+        // console.log(result)
+      }else{
+        this.router.navigateByUrl("/home");
+      }
+    });
   }
 
   ngOnInit() {
