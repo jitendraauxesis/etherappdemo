@@ -6,14 +6,14 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Main 
  
 ### Pages Used 
-1 Userhomecomponent __ 
-2 Userhomecsvdetailcomponent __
-3 Transactionhistorycomponent __
-4 Userhomemodelcomponent __
-5 Userhomesinglemodelcomponent __
-6 Historydetailcomponent __
-7 Settingscomponent __
-8 Settingsdialogcomponent __
+1 Userhomecomponent <br /> 
+2 Userhomecsvdetailcomponent <br />
+3 Transactionhistorycomponent <br />
+4 Userhomemodelcomponent <br />
+5 Userhomesinglemodelcomponent <br />
+6 Historydetailcomponent <br />
+7 Settingscomponent <br />
+8 Settingsdialogcomponent <br />
  
 ### Provider used 
 1 Service/cas.service.ts --> CasService <br />
@@ -123,116 +123,123 @@ To download a file using csv and json. <br />
 Integrated with download() method <br />
 *** 
  
-Layout/navbarComponent: 
-1 upload() 
-Is the method for navigating home url. 
-2 csvdetail() 
-Navigating csv/detail router. 
-3 history() 
-Navigating history router. 
-4 settings() 
-Navigating settings page not used. 
+## Layout/navbarComponent: 
+***
+1 upload() <br />
+Is the method for navigating home url. <br />
+2 csvdetail() <br />
+Navigating csv/detail router. <br />
+3 history() <br />
+Navigating history router. <br />
+4 settings() <br />
+Navigating settings page not used. <br />
+***
+
+## Historydetailcomponent 
+***
+1 ngOnInit <br />
+Load history transaction id as paramater and identify transactiov view detail either single or multiple. <br />
+2 incr <br />
+To increment multiple transaction row id  <br />
+3 convertToDate <br />
+Convert date to human radable <br />
+4 backlist <br />
+Navigate history page <br />
+*** 
  
-Historydetailcomponent 
-1 ngOnInit 
-Load history transaction id as paramater and identify transactiov view detail either single or multiple. 
-2 incr 
-To increment multiple transaction row id  
-3 convertToDate 
-Convert date to human radable 
-4 backlist 
-Navigate history page 
+## Settingscomponent 
+***
+1 constructor <br />
+Initialize form data and validation <br />
+2 letAuth <br />
+Open default the modal to update setting page <br />
+3 ngOnInit <br />
+Retrieve global variables and auth modal <br />
+4 submit <br />
+To change global values <br />
+*** 
  
- 
-Settingscomponent 
-1 constructor 
-Initialize form data and validation 
-2 letAuth 
-Open default the modal to update setting page 
-3 ngOnInit 
-Retrieve global variables and auth modal 
-4 submit 
-To change global values 
- 
- 
-Settingsdialogcomponent 
-1 check 
-Is used to response auth modal for setting page 
- 
- 
- 
-Providers: 
-1 FileUtilService: 
-Used to validate a csv file. 
-2 ConstantsService: 
-Initializing the static variables for csv file 
-3 CasService: 
-A instance creation of web3 provider using some method to access a transaction and all. 
-4 MycryptoService: 
-Provider used to generate app holder secret and storing and retireving method from local. 
-5 MywebService: 
-Not used. 
+## Settingsdialogcomponent 
+***
+1 check <br />
+Is used to response auth modal for setting page <br />
+*** 
  
  
-App.component.ts 
-In ngOnInit() method used to set node url that is not used and web3url for ethereum network using isStored variable and using different title for every page. 
-App.routes.ts 
-Define the app routers or urls and titles. 
-App.module.ts 
-All the component and provider services declaration in ngModule. 
+## Providers: 
+***
+1 FileUtilService: <br />
+Used to validate a csv file. <br />
+2 ConstantsService: <br />
+Initializing the static variables for csv file <br />
+3 CasService: <br />
+A instance creation of web3 provider using some method to access a transaction and all. <br />
+4 MycryptoService: <br />
+Provider used to generate app holder secret and storing and retireving method from local. <br />
+5 MywebService: <br />
+Not used. <br />
+*** 
+
+*** 
+### App.component.ts 
+In ngOnInit() method used to set node url that is not used and web3url for ethereum network using isStored variable and using different title for every page. <br />
+### App.routes.ts 
+Define the app routers or urls and titles. <br />
+### App.module.ts 
+All the component and provider services declaration in ngModule. <br />
+***
+
+## Directory Assets/ 
+Lib/image used images in app. <br />
  
-Directory Assets/ 
-Lib/image used images in app. 
- 
-Dependent npm packages used in app are placed in package.json file that is: 
-"dependencies": { 
-"@angular/animations": "^5.2.0", 
-"@angular/cdk": "^5.0.4", 
-"@angular/common": "^5.0.0", 
-"@angular/compiler": "^5.0.0", 
-"@angular/core": "^5.0.0", 
-"@angular/forms": "^5.0.0", 
-"@angular/http": "^5.0.0", 
-"@angular/material": "^5.0.4", 
-"@angular/platform-browser": "^5.0.0", 
-"@angular/platform-browser-dynamic": "^5.0.0", 
-"@angular/router": "^5.0.0", 
-"axios": "^0.17.1", 
-"bitcoinjs-lib": "^3.3.2", 
-"browser-solc": "git+https://github.com/ericxtang/browser-solc.git", 
-"buffer": "^5.0.8", 
-"core-js": "^2.4.1", 
-"crypto-js": "^3.1.9-1", 
-"ethereumjs-tx": "^1.3.3", 
-"ethers": "^2.2.0", 
-"ethjs": "^0.3.3", 
-"express": "^4.16.2", 
-"filereader": "^0.10.3", 
-"fs": "0.0.1-security", 
-"hammerjs": "^2.0.8", 
-"js-sha512": "^0.7.1", 
-"lodash": "^4.17.5", 
-"material-design-icons": "^3.0.1", 
-"moment": "^2.20.1", 
-"ngx-loading": "^1.0.14", 
-"ngx-webstorage": "^2.0.1", 
-"rxjs": "^5.5.2", 
-"secure-random": "^1.1.1", 
-"solc": "^0.4.19", 
-"web3": "^1.0.0-beta.28", 
-"zone.js": "^0.8.14" 
-}, 
+## Dependent npm packages used in app are placed in package.json file that is: 
+"dependencies": { <br />
+    "@angular/animations": "^5.2.0", <br />
+    "@angular/cdk": "^5.0.4", <br />
+    "@angular/common": "^5.0.0", <br />
+    "@angular/compiler": "^5.0.0", <br />
+    "@angular/core": "^5.0.0", <br />
+    "@angular/forms": "^5.0.0", <br />
+    "@angular/http": "^5.0.0", <br />
+    "@angular/material": "^5.0.4", <br />
+    "@angular/platform-browser": "^5.0.0", <br />
+    "@angular/platform-browser-dynamic": "^5.0.0", <br />
+    "@angular/router": "^5.0.0", <br />
+    "axios": "^0.17.1", <br />
+    "bitcoinjs-lib": "^3.3.2",<br /> 
+    "browser-solc": "git+https://github.com/ericxtang/browser-solc.git", <br />
+    "buffer": "^5.0.8", <br />
+    "core-js": "^2.4.1", <br />
+    "crypto-js": "^3.1.9-1", <br />
+    "ethereumjs-tx": "^1.3.3", <br />
+    "ethers": "^2.2.0", <br />
+    "ethjs": "^0.3.3", <br />
+    "express": "^4.16.2", <br />
+    "filereader": "^0.10.3", <br />
+    "fs": "0.0.1-security", <br />
+    "hammerjs": "^2.0.8", <br />
+    "js-sha512": "^0.7.1", <br />
+    "lodash": "^4.17.5", <br />
+    "material-design-icons": "^3.0.1", <br />
+    "moment": "^2.20.1", <br />
+    "ngx-loading": "^1.0.14", <br />
+    "ngx-webstorage": "^2.0.1", <br />
+    "rxjs": "^5.5.2", <br />
+    "secure-random": "^1.1.1", <br />
+    "solc": "^0.4.19", <br />
+    "web3": "^1.0.0-beta.28", <br />
+    "zone.js": "^0.8.14" <br />
+}, <br />
  
  
  
  
-Page Break
  
-Local  
-1) ethereum network started using 
-geth --identity "Node2" --rpc --rpcport "8008" --rpccorsdomain "*"  --datadir "/home/auxesis/Documents/ethereum" --port "30304" --nodiscover --rpcapi  "db,eth,net,web3,solc,personal,admin,debug,shh,txpool,solcjs" --networkid 1999 console 
-2) running node server for ethereum local 
-3) compile from node server and deploy in project 
-4) used sendether method to send money to current address in userhome 
-5)  
+## Local  
+1) ethereum network started using <br />
+geth --identity "Node2" --rpc --rpcport "8008" --rpccorsdomain "*"  --datadir "/home/auxesis/Documents/ethereum" --port "30304" --nodiscover --rpcapi  "db,eth,net,web3,solc,personal,admin,debug,shh,txpool,solcjs" --networkid 1999 console <br />
+2) running node server for ethereum local <br />
+3) compile from node server and deploy in project <br />
+4) used sendether method to send money to current address in userhome <br />
+5)  <br />
  
