@@ -18,10 +18,23 @@ export class MycryptoService {
     let chk = this.InitKeyGet();
     if( chk == "" || chk == undefined || chk == null){
       console.log("im in")
-      let key = "This is just a demo"; 
+      let key = "This is just a demo "+new Date(); 
       let val = sha256(key);
       this.localStorageService.store("SISKeystore",val);
+
+      //global vals
+      this.saveToLocalURL("SISNODEURL","http://localhost:3000/");
+      this.saveToLocalURL("SISWEB3URL","https://mainnet.infura.io/2H9y3HfwB9FOuy0Gqr4m");
+      this.saveToLocal("ViewTransactionAddressURL","https://etherscan.io/address/");
+      this.saveToLocal("ViewTransactionHashURL","https://etherscan.io/tx/");
     }
+  }
+
+  saveInitVars(){
+    this.saveToLocalURL("SISNODEURL","http://localhost:3000/");
+    this.saveToLocalURL("SISWEB3URL","https://mainnet.infura.io/2H9y3HfwB9FOuy0Gqr4m");
+    this.saveToLocal("ViewTransactionAddressURL","https://etherscan.io/address/");
+    this.saveToLocal("ViewTransactionHashURL","https://etherscan.io/tx/");
   }
 
   InitKeyGet():String{

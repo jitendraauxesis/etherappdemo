@@ -3,21 +3,90 @@
 <ngx-loading [show]="ngxloading"></ngx-loading>
 <mat-card class="panelcard">
   <mat-card-content>
-    <div class="tablecontent">
-      <table>
-        <thead>
-          <tr>
-            <th>Sr No.</th>
-            <th>Transaction Type</th>
-            <th>Time</th>
-            <th>Action</th>
-            <th>View</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div class="tablecontent" *ngIf="isDataAvailableSingle == true">
+      <mat-list>
+        <h3 mat-subheader>At</h3>
+        <mat-list-item>
+          <mat-icon mat-list-icon>watch</mat-icon>
+          <h4 mat-line>{{convertToDate(isSingle.timestamp)}}</h4>
+          <!-- <p mat-line> asdf </p> -->
+        </mat-list-item>
+        <h3 mat-subheader>Address Detail</h3>
+        <mat-list-item>
+          <mat-icon mat-list-icon>address</mat-icon>
+          <h4 mat-line>From Address: <a href="{{viewAddress}}{{isSingle.fromaddress}}" target="_blank">{{isSingle.fromaddress}}</a></h4>
+          <!-- <p mat-line> asdf </p> -->
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon>address</mat-icon>
+          <h4 mat-line>To Address: <a href="{{viewAddress}}{{isSingle.toaddress}}" target="_blank">{{isSingle.toaddress}}</a></h4>
+          <!-- <p mat-line> asdf </p> -->
+        </mat-list-item>
+        <mat-divider></mat-divider>
 
-        </tbody>
-      </table>
+        <h3 mat-subheader *ngIf="isSingle.transactionHash != null">Transaction Hash</h3>
+        <mat-list-item *ngIf="isSingle.transactionHash != null">
+          <mat-icon mat-list-icon>address</mat-icon>
+          <h4 mat-line><a href="{{viewHash}}{{isSingle.transactionHash}}" target="_blank">{{isSingle.transactionHash}}</a></h4>
+          <!-- <p mat-line> asdf </p> -->
+        </mat-list-item>
+        <mat-divider *ngIf="isSingle.transactionHash != null"></mat-divider>
+
+        <h3 mat-subheader>Notes</h3>
+        <mat-list-item>
+          <mat-icon mat-list-icon>note</mat-icon>
+          <h4 mat-line matTooltip="{{isSingle.message?isSingle.message:'Successful token transfer'}}">{{isSingle.message?isSingle.message:'Successful token transfer'}}</h4>
+          <!-- <p mat-line> fdgdf </p> -->
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="multiplecontent" *ngIf="isDataAvailableMultiple == true">
+        <div class="listcontent">
+          <div>
+              <b>From Address:</b>&nbsp;&nbsp;<a href="{{viewAddress}}{{isMultiple.fromaddress}}" target="_blank">{{isMultiple.fromaddress}}</a>
+          </div>
+          <div>
+              <b>Total Tokens:</b>&nbsp;&nbsp;{{isMultiple.tokens}}
+          </div>
+          <div>
+            <b>At</b>&nbsp;&nbsp;{{convertToDate(isMultiple.timestamp)}}
+          </div>
+        </div>
+        <br>
+        <div class="table-responsive">
+          <table class="multipletable">
+            <thead>
+              <tr>
+                <th>Sr No.</th>
+                <th>To Address</th>
+                <th>Hash</th>
+                <th>Tokens</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of isMultiple.csvData">
+                <td>
+                  {{incr(m.position)}}
+                </td>
+                <td>
+                  <a href="{{viewAddress}}{{m.address}}" target="_blank">{{m.address}}</a>
+                </td>
+                <td>
+                    <a href="{{viewHash}}{{m.hash}}" target="_blank">{{m.hash}}</a>
+                </td>
+                <td>
+                  {{m.tokens}}
+                </td>
+                <td>
+                  {{m.response}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
     </div>
   </mat-card-content>
 </mat-card>
+
+<button mat-fab  color="warn" class="matbtn" (click)="backlist()"><mat-icon mat-list-icon>folder</mat-icon></button>

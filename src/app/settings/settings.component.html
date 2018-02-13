@@ -7,6 +7,18 @@
 
       <form [formGroup]="uploadForm" class="example-form tcontract">
         <mat-form-field class="example-full-width">
+          <input matInput class="contractwna" placeholder="Web3 Network URL" [(ngModel)]="web3URL" formControlName="web3URL">
+        </mat-form-field>
+        
+        <mat-form-field class="example-full-width">
+          <input matInput class="contractta" placeholder="Transaction Address URL" [(ngModel)]="addressURL" formControlName="addressURL">
+        </mat-form-field>
+ 
+        <mat-form-field class="example-full-width">
+          <input matInput class="contractha" placeholder="Transaction Hash URL" [(ngModel)]="hashURL" formControlName="hashURL">
+        </mat-form-field>
+        
+        <mat-form-field class="example-full-width">
           <input matInput class="contractaddr" placeholder="Contract Address" [(ngModel)]="contractAddress" formControlName="contractAddress">
         </mat-form-field>
 

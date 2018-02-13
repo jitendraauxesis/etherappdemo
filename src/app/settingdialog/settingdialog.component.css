@@ -1,0 +1,11 @@
+mat-dialog-container.mat-dialog-container {
+    text-align: center;
+} 
+.pc {
+    text-align: center;
+}
+
+.submitbtn{
+    background-color: #3f51b5;
+    color: #fff
+}

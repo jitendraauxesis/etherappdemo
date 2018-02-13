@@ -22,8 +22,17 @@ export class HistorydetailComponent implements OnInit {
   link: HTMLAnchorElement;
 
   tableContent:any = [];
-  isDataAvailable:boolean = false;
+  isDataAvailableSingle:boolean = false;
+  isDataAvailableMultiple:boolean = false;
+  
   public ngxloading  = false;
+
+  isSingle:any;
+  isMultiple:any;
+
+  viewAddress:any;
+  viewHash:any;
+
   constructor(
     public snackBar: MatSnackBar,
     public mycryptoService:MycryptoService,
@@ -37,22 +46,60 @@ export class HistorydetailComponent implements OnInit {
     let id = this.activeroutes.snapshot.paramMap.get("id");
     let chk = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
     if(chk == null || chk == ""){
-      this.isDataAvailable = false;
+      this.isDataAvailableSingle = false;
+      this.isDataAvailableMultiple = false;
     }
     else if(id == "0" || id == null){
-      history.back();
+      // history.back();
+      this.router.navigate(["history"]);
     }
     else{
-      this.isDataAvailable = true;
+      
       let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
-      // console.log(data)
-      data.forEach((value,key) => {
-        this.tableContent.push(value)
-      }); 
-      console.log(this.tableContent,id) 
+      console.log(data)
+      let find = _.find(data,function(o){if(o.id == id){return o;}}) 
+      console.log(this.tableContent,id,find) 
+      if(find == undefined || find == null || find == ""){
+        this.router.navigate(["history"]);
+      }else{
+        let distributed = find.distributed;
+        if(distributed == "single"){
+          this.isDataAvailableSingle = true;
+          this.isDataAvailableMultiple = false;
+          this.isSingle = find;
+        }
+        else if(distributed == "multiple"){
+          this.isDataAvailableSingle = false;
+          this.isDataAvailableMultiple = true;
+          this.isMultiple = find;           
+        }else{
+          this.router.navigate(["history"]);
+        }
+      }
     }
-    console.log(chk,id)  
+    // console.log(chk,id)  
     
+
+    this.viewAddress = this.mycryptoService.retrieveFromLocal("ViewTransactionAddressURL");
+    this.viewHash = this.mycryptoService.retrieveFromLocal("ViewTransactionHashURL");
+    console.log(
+      this.viewAddress,this.viewHash
+    );
+  }
+
+  incr(i){
+    i = i+1
+    return i;
+  }
+
+  convertToDate(timestamp){
+    // let date = moment.unix(timestamp).fromNow();//.format("MMM Do, YYYY");
+    let date = moment(new Date(timestamp)).format("LLLL");
+    return date;
+  }
+
+  backlist(){
+    this.router.navigateByUrl("/history");
   }
 
 }

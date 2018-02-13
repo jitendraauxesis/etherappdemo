@@ -64,6 +64,7 @@ import { UserhomesinglemodelComponent } from './userhomesinglemodel/userhomesing
 import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HistorydetailComponent } from './historydetail/historydetail.component';
+import { SettingdialogComponent } from './settingdialog/settingdialog.component';
 
 
 
@@ -117,11 +118,13 @@ export class DemoMaterialModule {}
     UserhomesinglemodelComponent,
     TransactionhistoryComponent,
     SettingsComponent,
-    HistorydetailComponent
+    HistorydetailComponent,
+    SettingdialogComponent
   ],
   entryComponents: [
     UserhomemodelComponent,
-    UserhomesinglemodelComponent
+    UserhomesinglemodelComponent,
+    SettingdialogComponent
   ],
   imports: [
     BrowserModule,

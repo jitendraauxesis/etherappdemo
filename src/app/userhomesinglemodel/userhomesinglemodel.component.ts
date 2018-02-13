@@ -34,8 +34,8 @@ export class UserhomesinglemodelComponent implements OnInit {
   errormessage:string = '';
   successmessage:string = '';
 
-  viewAddress:string = 'https://etherscan.io/address/';//'https://ropsten.etherscan.io/address/';
-  viewHash:string = 'https://etherscan.io/tx/';
+  viewAddress:any = 'https://etherscan.io/address/';//'https://ropsten.etherscan.io/address/';
+  viewHash:any = 'https://etherscan.io/tx/';
 
   constructor(
     public casService:CasService,
@@ -46,6 +46,10 @@ export class UserhomesinglemodelComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.viewAddress = this.mycryptoService.retrieveFromLocal("ViewTransactionAddressURL");
+    this.viewHash = this.mycryptoService.retrieveFromLocal("ViewTransactionHashURL");
+
     //fee
     this.SISFeeCalc = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFeeCalc")).toString());
     // console.log(this.SISFeeCalc);
