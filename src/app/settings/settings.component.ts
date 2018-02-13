@@ -85,7 +85,11 @@ export class SettingsComponent implements OnInit {
       (this.addressURL == null || this.addressURL == "" || !this.addressURL) ||
       (this.hashURL == null || this.hashURL == "" || !this.hashURL) 
     ){
-
+      this.mycryptoService.saveInitVars();
+      this.nodeURL = this.mycryptoService.retrieveFromLocalURL("SISNODEURL");
+      this.web3URL = this.mycryptoService.retrieveFromLocalURL("SISWEB3URL");
+      this.addressURL = this.mycryptoService.retrieveFromLocal("ViewTransactionAddressURL");
+      this.hashURL = this.mycryptoService.retrieveFromLocal("ViewTransactionHashURL");
     }else{
       // console.log(this.uploadForm.value)
       this.uploadForm.get('contractAddress').setValue(this.contractAddress);
