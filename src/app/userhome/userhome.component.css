@@ -44,7 +44,9 @@ mat-form-field {
     /* margin-right: 20%;
     margin-left: 20%; */
 }
-
+button.csvbtn.mat-raised-button {
+    margin-top: 20px;
+}
 /* .inputfile {
     width: 0.1px;
     height: 0.1px;

@@ -347,7 +347,7 @@ export class UserhomeComponent implements OnInit {
   openModal(){
     const dialogRef = this.dialog.open(UserhomemodelComponent, {
       height: '480px',
-      width:'500px',
+      width:'540px',
       hasBackdrop: false
     });
 
@@ -767,5 +767,46 @@ export class UserhomeComponent implements OnInit {
     });
   }
   
+  link: HTMLAnchorElement;
+
+  dothese(event){
+    event.preventDefault();
+    this.casService.readCSV()
+    .then(
+      d=>{
+        let dt = JSON.parse(JSON.stringify(d));
+        if(dt.statusText == "OK" || dt.statusText == "ok"){
+          // console.log(dt._body)
+          let data = dt._body;
+          let csv = btoa(data);
+          let val =  "data:text/csv;base64,"+csv;
+          let filename = "Sample-"+"CAS-Token-Distributor-CSV-"+moment().unix();
+          this.downloadURI(val, filename+".csv");
+        }else{
+          this.snackBar.open('Sample CSV file unable to download','',{
+            duration:2000
+          });
+        }
+      },
+      e=>{
+        // console.log(e) 
+        this.snackBar.open('Sample CSV file unable to download','',{
+          duration:2000
+        });
+      }
+    )
+    
+  }
+
+  downloadURI(uri, name) {
+      
+    this.link = document.createElement("a");
+    this.link.download = name;
+    this.link.href = uri;
+    document.body.appendChild(this.link);
+    this.link.click();
+    document.body.removeChild(this.link);
+    delete this.link;
+  }
 
 }

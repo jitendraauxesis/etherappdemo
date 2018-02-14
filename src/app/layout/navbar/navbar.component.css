@@ -3,3 +3,7 @@ button.mat-button {
     right: 0;
     position: absolute;
 }
+
+img.casimage {
+    width: 45px;
+}

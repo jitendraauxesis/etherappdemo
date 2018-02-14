@@ -16,6 +16,10 @@
         
         <input type="file" accept=".csv" id="ufile" class="inputfile" name="ufile" (change)="fileChangeListener($event)" #csvfile>
       </label>
+      <br>
+      <button class="csvbtn" mat-raised-button (click)="dothese($event)">
+          Download a sample .csv file
+      </button> 
       <!-- </mat-form-field> -->
       <br>
       <mat-form-field class="example-full-width" style="margin-top:4%">

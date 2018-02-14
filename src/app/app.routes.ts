@@ -18,42 +18,42 @@ const routes:Routes = [
         path: "",
         component: UserhomeComponent,
         pathMatch: "full",
-        data: { title: 'Home | CAS Distribution' }
+        data: { title: 'Home | CAS Distributor' }
     },
     {
         path: "home",
         component: UserhomeComponent,
-        data: { title: 'Home | CAS Distribution' }
+        data: { title: 'Home | CAS Distributor' }
     },
     {
         path: "welcome",
         component: WelcomeComponent,
-        data: { title: 'Home | CAS Distribution' }
+        data: { title: 'Home | CAS Distributor' }
     },
     {
         path: "csv/detail",
         component: UserhomecsvdetailComponent,
-        data: { title: 'CSV Detail | CAS Distribution' }
+        data: { title: 'CSV Detail | CAS Distributor' }
     },
     {
         path: "history",
         component: TransactionhistoryComponent,
-        data: { title: 'History | CAS Distribution' }
+        data: { title: 'History | CAS Distributor' }
     },
     {
         path: "history/view/:id",
         component: HistorydetailComponent,
-        data: { title: 'History | CAS Distribution' }
+        data: { title: 'History | CAS Distributor' }
     },
     {
         path: "settings",
         component: SettingsComponent,
-        data: { title: 'Settings | CAS Distribution' }
+        data: { title: 'Settings | CAS Distributor' }
     },
     {
         path: "**",
         component: UserhomeComponent,
-        data: { title: 'Home | CAS Distribution' }
+        data: { title: 'Home | CAS Distributor' }
     }
     /**
      * Old urls

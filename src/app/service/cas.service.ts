@@ -31,6 +31,17 @@ export class CasService {
     // console.log(Buffer)
   }
 
+  readCSV(){
+    return new Promise((resolve,reject)=>{
+      this.http.get("assets/lib/main.csv")
+      .map(res=>res)
+      .subscribe(
+        d=>resolve(d),
+        e=>reject(e)
+      );
+    });
+  }
+
   init(){
     return this.web3;
   }
