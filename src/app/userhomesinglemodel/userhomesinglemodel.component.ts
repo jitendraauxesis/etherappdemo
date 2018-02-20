@@ -8,6 +8,8 @@ import * as solc from 'solc';
 import * as Buffer from 'buffer';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 @Component({
   selector: 'app-userhomesinglemodel',
   templateUrl: './userhomesinglemodel.component.html',
@@ -41,6 +43,8 @@ export class UserhomesinglemodelComponent implements OnInit {
     public casService:CasService,
     public snackBar: MatSnackBar,
     public mycryptoService:MycryptoService,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { 
     this.web3 = this.casService.init();
   }
@@ -142,6 +146,8 @@ export class UserhomesinglemodelComponent implements OnInit {
                 this.successmessage = dt.message;
                 this.initialView = 2;
                 this.ngxloading  = false;
+                this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
+                
               }else if(dt.status == "success"){
                 this.snackBar.open(dt.message,'',{
                   duration:2000
@@ -149,6 +155,8 @@ export class UserhomesinglemodelComponent implements OnInit {
                 this.isSuccessinitialView = true;
                 this.initialView = 2;
                 this.ngxloading  = false;
+                this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
+                
               }
               else{
                 this.ngxloading  = false;
@@ -163,6 +171,8 @@ export class UserhomesinglemodelComponent implements OnInit {
               this.snackBar.open('Token transfer failed','',{
                 duration:2000
               });
+              this.logServ.putErrorInPouch("callsubmit()","Single token transfer failed","Token transfer unsuccessful due to error,"+JSON.stringify(e),"1");
+        
             }
           );
         }else{
@@ -171,6 +181,8 @@ export class UserhomesinglemodelComponent implements OnInit {
           });
         }
       }catch(e){
+        this.logServ.putErrorInPouch("callsubmit()","Invalid private key enter","For multiple token transfer","3");
+        
         this.snackBar.open('Private Key Is Invalid','',{
           duration:2000
         });

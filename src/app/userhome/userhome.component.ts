@@ -17,6 +17,8 @@ import * as solc from 'solc';
 import * as Buffer from 'buffer';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 @Component({
   selector: 'app-userhome',
   templateUrl: './userhome.component.html',
@@ -41,7 +43,9 @@ export class UserhomeComponent implements OnInit {
     public mycryptoService:MycryptoService,
     public casService:CasService,
     public dialog: MatDialog,
-    private _fileUtil: FileUtilService
+    private _fileUtil: FileUtilService,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) {  
     this.uploadForm = formbuilder.group({
       ufile:['',[Validators.compose([Validators.required])]],
@@ -173,69 +177,74 @@ export class UserhomeComponent implements OnInit {
   }
 
   fileChangeListener(event): void {
-    console.log("event",event);
-    var text = [];
-    var files = event.target.files;
- 
-    if(ConstantsService.validateHeaderAndRecordLengthFlag){
-      if(!this._fileUtil.isCSVFile(files[0])){
-        // alert("Please import valid .csv file.");
-        this.snackBar.open("Please import valid .csv file.",'Undo',{
+    // console.log("event",event);
+    try{
+      var text = [];
+      var files = event.target.files;
+  
+      if(ConstantsService.validateHeaderAndRecordLengthFlag){
+        if(!this._fileUtil.isCSVFile(files[0])){
+          // alert("Please import valid .csv file.");
+          this.snackBar.open("Please import valid .csv file.",'Undo',{
+            duration:2000
+          });
+          this.fileReset();
+        }  
+      }
+  
+      var input = event.target;
+      var file = input.files[0];
+      var reader = new FileReader();
+      reader.readAsText(input.files[0]);
+  
+      reader.onload = (data) => {
+        let csvData = reader.result;
+        this.fileContent = csvData;
+        let csvRecordsArray = csvData.split(/\r\n|\n/);///\r\n|\n/
+  
+        csvRecordsArray = _.filter(csvRecordsArray,function(o){return o!="";});
+        // console.log(csvRecordsArray)
+        var headerLength = -1;
+        if(ConstantsService.isHeaderPresentFlag){
+          let headersRow = this._fileUtil.getHeaderArray(csvRecordsArray, ConstantsService.tokenDelimeter);
+          headerLength = headersRow.length; 
+        }
+        
+        this.csvRecords = this._fileUtil.getDataRecordsArrayFromCSVFile(csvRecordsArray, 
+            headerLength, ConstantsService.validateHeaderAndRecordLengthFlag, ConstantsService.tokenDelimeter);
+        
+        // console.log(this.csvRecords)
+        
+        // not available
+        if(this.csvRecords == null){
+          //If control reached here it means csv file contains error, reset file.
+          this.fileReset();
+        }
+        else{
+          //file content available    
+          // // console.log("this.csvRecords",this.csvRecords)
+          this.uploadForm.get('ufile').setValue({
+            filename: file.name,
+            filetype: file.type,
+            filesize: file.size,
+            value: reader.result,
+            lastmodified:file.lastModified,
+            lastmodifieddate:file.lastModifiedDate
+          }) 
+          // // console.log("ok")
+        }    
+      }
+  
+      reader.onerror = () => {
+        // alert('Unable to read ' + input.files[0]);
+        this.snackBar.open('Unable to read ' + input.files[0],'Undo',{
           duration:2000
         });
-        this.fileReset();
-      }  
+      };
+    }catch(e){
+      this.logServ.putErrorInPouch("fileChangeListener()","File upload error caught","Some issue with uploaded file,"+JSON.stringify(e),"1");
     }
- 
-    var input = event.target;
-    var file = input.files[0];
-    var reader = new FileReader();
-    reader.readAsText(input.files[0]);
- 
-    reader.onload = (data) => {
-      let csvData = reader.result;
-      this.fileContent = csvData;
-      let csvRecordsArray = csvData.split(/\r\n|\n/);///\r\n|\n/
- 
-      csvRecordsArray = _.filter(csvRecordsArray,function(o){return o!="";});
-      // console.log(csvRecordsArray)
-      var headerLength = -1;
-      if(ConstantsService.isHeaderPresentFlag){
-        let headersRow = this._fileUtil.getHeaderArray(csvRecordsArray, ConstantsService.tokenDelimeter);
-        headerLength = headersRow.length; 
-      }
-       
-      this.csvRecords = this._fileUtil.getDataRecordsArrayFromCSVFile(csvRecordsArray, 
-          headerLength, ConstantsService.validateHeaderAndRecordLengthFlag, ConstantsService.tokenDelimeter);
-      
-      // console.log(this.csvRecords)
-      
-      // not available
-      if(this.csvRecords == null){
-        //If control reached here it means csv file contains error, reset file.
-        this.fileReset();
-      }
-      else{
-        //file content available    
-        // // console.log("this.csvRecords",this.csvRecords)
-        this.uploadForm.get('ufile').setValue({
-          filename: file.name,
-          filetype: file.type,
-          filesize: file.size,
-          value: reader.result,
-          lastmodified:file.lastModified,
-          lastmodifieddate:file.lastModifiedDate
-        }) 
-        // // console.log("ok")
-      }    
-    }
- 
-    reader.onerror = () => {
-      // alert('Unable to read ' + input.files[0]);
-      this.snackBar.open('Unable to read ' + input.files[0],'Undo',{
-        duration:2000
-      });
-    };
+
   };
  
   fileReset(){
@@ -275,6 +284,7 @@ export class UserhomeComponent implements OnInit {
       // console.log(a,"a")
       if(a==1){
         this.ngxloading  = false;
+        this.logServ.putErrorInPouch("uploadcsv()","File error while submitting","Some issue with uploaded file","2");        
         this.snackBar.open('The file content is wrong. Correct it.','Undo',{
           duration:3000
         }).afterDismissed().subscribe(d=>{
@@ -437,7 +447,8 @@ export class UserhomeComponent implements OnInit {
                   eth:web3.utils.fromWei(val[1],'ether')
                 })) 
                 this.mycryptoService.saveToLocal("SISTokenTransferFromAddress",this.uploadForm.value.address);
-                
+                this.activityServ.putActivityInPouch("UserhomeComponent","calculatingFee()","From uploadcsv validating form user open modal for multiple token transfer","uploadcsv() method and succeeded and successfully opened modal for multiple token transfer");        
+        
                 this.openModal(); 
               }
             )
@@ -736,6 +747,8 @@ export class UserhomeComponent implements OnInit {
                   // console.log("fromwei",fromwei, this.mycryptoService.retrieveFromLocal("SISFeeCalc"));
                   this.ngxloading  = false;
                   this.openModalForSingle();
+                  this.activityServ.putActivityInPouch("UserhomeComponent","singlenext()","User visited to send token from single token transfer page.","Navigate to single CAS token transfer");        
+        
                 }
               )
 
@@ -787,9 +800,11 @@ export class UserhomeComponent implements OnInit {
             duration:2000
           });
         }
+        this.activityServ.putActivityInPouch("UserhomeComponent","dothese()","Downloaded a sample .csv file.","To know the schema of csv data user downloaded a sample file.");
       },
       e=>{
         // console.log(e) 
+        this.logServ.putErrorInPouch("dothese()","File unable to read","Some issue with uploaded file,"+JSON.stringify(e),"1");
         this.snackBar.open('Sample CSV file unable to download','',{
           duration:2000
         });

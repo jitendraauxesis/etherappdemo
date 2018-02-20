@@ -13,6 +13,8 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Router,  ActivatedRoute,ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap'; //to fetch url params
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 @Component({
   selector: 'app-historydetail',
   templateUrl: './historydetail.component.html',
@@ -39,7 +41,9 @@ export class HistorydetailComponent implements OnInit {
     public casService:CasService,
     public dialog: MatDialog,
     public router:Router, 
-    public activeroutes:ActivatedRoute
+    public activeroutes:ActivatedRoute,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { }
 
   ngOnInit() {
@@ -79,6 +83,7 @@ export class HistorydetailComponent implements OnInit {
     }
     // console.log(chk,id)  
     
+    this.activityServ.putActivityInPouch("HistorydetailComponent","ngOnInit()","Viewed history page.","");
 
     this.viewAddress = this.mycryptoService.retrieveFromLocal("ViewTransactionAddressURL");
     this.viewHash = this.mycryptoService.retrieveFromLocal("ViewTransactionHashURL");

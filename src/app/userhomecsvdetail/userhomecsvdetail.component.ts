@@ -3,6 +3,8 @@ import {MatTableDataSource} from '@angular/material';
 import { MycryptoService } from '../service/mycrypto.service';
 import { CasService } from '../service/cas.service';
 import { Router } from '@angular/router';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 // const ELEMENT_DATA: Element[] = [];
 @Component({
   selector: 'app-userhomecsvdetail',
@@ -24,7 +26,9 @@ export class UserhomecsvdetailComponent implements OnInit {
   constructor(
     public mycryptoService:MycryptoService,
     public casService:CasService,
-    public router:Router
+    public router:Router,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { 
     this.web3 = this.casService.init();
   }
@@ -34,7 +38,9 @@ export class UserhomecsvdetailComponent implements OnInit {
     let check = this.mycryptoService.retrieveFromLocal("SISFileUploadContent");
     if(check == null || check == "" || !check){
       this.router.navigateByUrl("/home");
+      this.logServ.putErrorInPouch("ngOnInit()","File unable to read","CSV file yet not uploaded","1");
     }else{
+      this.activityServ.putActivityInPouch("UserhomecsvdetailComponent","ngOnInit()","Viewed recently uploaded .csv file.","");
 
       let dt = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFileUploadContent")).toString());
       // console.log(dt,this.csvData,dt.csvData.length)

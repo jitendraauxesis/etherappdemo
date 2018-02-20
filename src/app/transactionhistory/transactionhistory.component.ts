@@ -12,6 +12,8 @@ import { UserhomesinglemodelComponent } from '../userhomesinglemodel/userhomesin
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Router } from '@angular/router';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 
 @Component({
   selector: 'app-transactionhistory',
@@ -30,7 +32,9 @@ export class TransactionhistoryComponent implements OnInit {
     public mycryptoService:MycryptoService,
     public casService:CasService,
     public dialog: MatDialog,
-    public router:Router
+    public router:Router,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { }
 
   ngOnInit() {
@@ -38,6 +42,8 @@ export class TransactionhistoryComponent implements OnInit {
     if(chk == null || chk == ""){
       this.isDataAvailable = false;
     }else{
+      this.activityServ.putActivityInPouch("TransactionhistoryComponent","ngOnInit()","Viewed recent transactions.","");
+
       this.isDataAvailable = true;
       let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
       // console.log(data)

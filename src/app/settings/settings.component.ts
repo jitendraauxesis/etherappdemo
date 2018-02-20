@@ -8,6 +8,8 @@ import { FormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@a
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { SettingdialogComponent } from '../settingdialog/settingdialog.component';
 import { Router } from '@angular/router';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -30,7 +32,9 @@ export class SettingsComponent implements OnInit {
     public mycryptoService:MycryptoService,
     public formbuilder:FormBuilder,
     public dialog:MatDialog,
-    public router:Router
+    public router:Router,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { 
     this.uploadForm = formbuilder.group({
       contractAddress:['',[Validators.compose([Validators.required])]],
@@ -115,6 +119,7 @@ export class SettingsComponent implements OnInit {
       this.mycryptoService.saveToLocal("ViewTransactionAddressURL",(this.uploadForm.value.addressURL));
       this.mycryptoService.saveToLocal("ViewTransactionHashURL",(this.uploadForm.value.hashURL));
       
+      this.activityServ.putActivityInPouch("SettingsComponent","submit()","Settings changed","The values are:"+JSON.stringify(this.uploadForm.value));
 
       this.snackBar.open("Contract detail updated.",'',{
         duration:2000

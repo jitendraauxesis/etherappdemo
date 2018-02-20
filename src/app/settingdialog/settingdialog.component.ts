@@ -7,6 +7,8 @@ import { CasService } from '../service/cas.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { Router } from '@angular/router';
 import 'rxjs/add/operator/map';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 @Component({
   selector: 'app-settingdialog',
   templateUrl: './settingdialog.component.html',
@@ -21,7 +23,9 @@ export class SettingdialogComponent implements OnInit {
     public mycryptoService:MycryptoService,
     public dialogRef: MatDialogRef<SettingdialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public router:Router
+    public router:Router,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { }
 
   ngOnInit() {
@@ -55,6 +59,8 @@ export class SettingdialogComponent implements OnInit {
       this.dialogRef.afterClosed().subscribe(result=>{
         console.log("result",result)
           if(result  == true){
+            this.activityServ.putActivityInPouch("SettingdialogComponent","check()","Viewed a secret dialog to open setting page.","Valid user");
+
             // console.log(result)
           }else if(result == undefined || result == null || result == ""){
             this.router.navigateByUrl("/home");

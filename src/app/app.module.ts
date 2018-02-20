@@ -52,6 +52,8 @@ import { MycryptoService } from './service/mycrypto.service';
 import { CasService } from './service/cas.service';
 import { FileUtilService } from './interfaces/file-util.service';
 import { ConstantsService } from './interfaces/constants.service';
+import { PouchlogsService } from './service/pouchlogs.service';
+import { PouchactivityService } from './service/pouchactivity.service';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -152,7 +154,9 @@ export class DemoMaterialModule {}
     MycryptoService,
     CasService,
     FileUtilService,
-    ConstantsService
+    ConstantsService,
+    PouchlogsService,
+    PouchactivityService
   ],
   bootstrap: [AppComponent]
 })

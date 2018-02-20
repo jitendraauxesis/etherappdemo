@@ -43,20 +43,28 @@ export class MycryptoService {
   }
 
   saveToLocal(name,s){
-    let key = this.InitKeyGet();
-    let str = (CryptJS.AES.encrypt(s,key)).toString();
-    this.localStorageService.store(name,str);
+    try{
+      let key = this.InitKeyGet();
+      let str = (CryptJS.AES.encrypt(s,key)).toString();
+      this.localStorageService.store(name,str);
+    }catch(e){
+
+    }
   }
 
   retrieveFromLocal(name):String{
-    let key = this.InitKeyGet();
-    let fromStore = this.localStorageService.retrieve(name);
-    if( fromStore == "" || fromStore == null || fromStore == undefined ){
-      return "";
-    }else{
-      let decrypt = CryptJS.AES.decrypt(fromStore,key);
-      let str = decrypt.toString(CryptJS.enc.Utf8);
-      return str;
+    try{
+      let key = this.InitKeyGet();
+      let fromStore = this.localStorageService.retrieve(name);
+      if( fromStore == "" || fromStore == null || fromStore == undefined ){
+        return "";
+      }else{
+        let decrypt = CryptJS.AES.decrypt(fromStore,key);
+        let str = decrypt.toString(CryptJS.enc.Utf8);
+        return str;
+      }
+    }catch(e){
+      
     }
   }
 

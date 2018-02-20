@@ -8,6 +8,8 @@ import * as solc from 'solc';
 import * as Buffer from 'buffer';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { PouchactivityService } from '../service/pouchactivity.service';
+import { PouchlogsService } from '../service/pouchlogs.service';
 @Component({
   selector: 'app-userhomemodel',
   templateUrl: './userhomemodel.component.html',
@@ -42,6 +44,8 @@ export class UserhomemodelComponent implements OnInit {
     public casService:CasService,
     public snackBar: MatSnackBar,
     public mycryptoService:MycryptoService,
+    public activityServ:PouchactivityService,
+    public logServ:PouchlogsService
   ) { 
     this.web3 = this.casService.init();
   }
@@ -143,6 +147,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.isSuccessinitialView = false;
                 this.successmessage = "One of token transfer failed";
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
+                this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Unsuccessful transaction","Response:"+JSON.stringify(d));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
               }else if(dt.status == "success"){
                 this.ngxloading  = false;
@@ -155,6 +160,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.successmessage = 'Total '+this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses+' addresses';
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
+                this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
                 
               }else{
                 this.ngxloading  = false;
@@ -169,15 +175,20 @@ export class UserhomemodelComponent implements OnInit {
               this.snackBar.open('Token transfer failed','',{
                 duration:2000
               });
+              this.logServ.putErrorInPouch("callsubmit()","CSV Multiple token transfer failed","Token transfer unsuccessful due to error,"+JSON.stringify(e),"1");
+        
             }
           );
           
         }else{
+          
           this.snackBar.open('Private Key Is Invalid','',{
             duration:2000
           });
         }
       }catch(e){
+        this.logServ.putErrorInPouch("callsubmit()","Invalid private key enter","For multiple token transfer","3");
+        
         this.snackBar.open('Private Key Is Invalid','',{
           duration:2000
         });
