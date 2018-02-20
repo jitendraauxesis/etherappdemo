@@ -172,10 +172,10 @@ export class UserhomeComponent implements OnInit {
     }
   }
 
-  fileChangeListener($event): void {
- 
+  fileChangeListener(event): void {
+    console.log("event",event);
     var text = [];
-    var files = $event.srcElement.files;
+    var files = event.target.files;
  
     if(ConstantsService.validateHeaderAndRecordLengthFlag){
       if(!this._fileUtil.isCSVFile(files[0])){
@@ -184,10 +184,10 @@ export class UserhomeComponent implements OnInit {
           duration:2000
         });
         this.fileReset();
-      }
+      }  
     }
  
-    var input = $event.target;
+    var input = event.target;
     var file = input.files[0];
     var reader = new FileReader();
     reader.readAsText(input.files[0]);
