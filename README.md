@@ -20,7 +20,8 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 2 Service/mycrypto.service.ts --> MycryptoService <br />
 3 interfaces/constants.service.ts --> ConstantsService <br />
 4 interfaces/file-util.service.ts --> FileUtilService <br />
- 
+5 service/pouchactivity.service.ts --> PouchactivityService <br />
+6 service/pouchlogs.service.ts --> PouchlogService <br />
  
 ## Userhomecomponent: 
 ***
@@ -178,6 +179,10 @@ A instance creation of web3 provider using some method to access a transaction a
 Provider used to generate app holder secret and storing and retireving method from local. <br />
 5 MywebService: <br />
 Not used. <br />
+6 PouchactivityService: <br />
+Used for application activity by user end.  <br />
+7 PouchlogsService: <br />
+Provider used for logging errors activity from application. <br />
 *** 
 
 *** 
