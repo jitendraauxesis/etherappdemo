@@ -25,7 +25,7 @@ export class UserhomemodelComponent implements OnInit {
   initialView:number = 0;
   isSuccessinitialView:boolean = true;
 
-  isCSVValid:boolean = false;
+  isCSVValid:boolean = true;
 
   fromaddress:any;
   privatekey:any;
@@ -57,10 +57,12 @@ export class UserhomemodelComponent implements OnInit {
     // console.log(csvFileContent);
 
     //file is valid
+    let filename =csvFileContent.filedata.ufile.filename; 
     let isValid = csvFileContent.filedata.ufile.filetype;
-    if(isValid == "text/csv"){
+    if( filename.indexOf("csv") > -1 || isValid.indexOf("csv") > -1 || isValid == "text/csv"){
       this.isCSVValid = true;
-    }else{
+    }
+    else{
       this.isCSVValid = false;
     }
 
