@@ -37,6 +37,9 @@ export class UserhomeComponent implements OnInit {
 
   isSelect = 1;
 
+  recordTOSendMsg1:any = "";
+  recordTOSendMsg2:any = "";
+
   constructor(
     public formbuilder:FormBuilder,
     public snackBar: MatSnackBar,
@@ -262,10 +265,17 @@ export class UserhomeComponent implements OnInit {
         // // console.log(value[key][0],value.length)
         // console.log(web3.utils.isAddress(value[key][0]),value[key][1])
         if(web3.utils.isAddress(value[key][0]) && (value[key][1]!=0||value[key][1]!="0")){
-          // // console.log(value,key)
+          // console.log(web3.utils.isAddress(value[key][0]),value[key][0],value[key][1],key)
           error = 0;
         }else{
-          // // console.log("error")
+          // console.log(web3.utils.isAddress(value[key][0]),value[key][0],value[key][1],key)
+          if(web3.utils.isAddress(value[key][0]) == false){
+            this.recordTOSendMsg1 = "Address "+value[key][0]+" is invalid. ";
+          }
+          if((value[key][1]==0||value[key][1]=="0")){
+            this.recordTOSendMsg2 = "Token value "+value[key][1]+" not acceptable.";
+          }
+          // console.log("error")
           error = 1;
           break;
           // return false;
@@ -287,12 +297,14 @@ export class UserhomeComponent implements OnInit {
       if(a==1){
         this.ngxloading  = false;
         this.logServ.putErrorInPouch("uploadcsv()","File error while submitting","Some issue with uploaded file","2");        
-        this.snackBar.open('The file content is wrong. Correct it.','Undo',{
-          duration:3000
-        }).afterDismissed().subscribe(d=>{
 
+        this.snackBar.open('The file content is wrong.'+this.recordTOSendMsg1+this.recordTOSendMsg2+' Correct it.','',{
+          duration:5000
+        }).afterDismissed().subscribe(d=>{
+          this.recordTOSendMsg1 = "";
+          this.recordTOSendMsg2 = "";
         });
-      }
+      } 
       else if(this.uploadForm.value.address == null || this.uploadForm.value.address == ""){
         this.ngxloading  = false;
         this.snackBar.open('Address is required','Undo',{
