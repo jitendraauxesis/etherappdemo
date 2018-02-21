@@ -199,11 +199,12 @@ export class UserhomeComponent implements OnInit {
   
       reader.onload = (data) => {
         let csvData = reader.result;
+        // console.log("csvData,",csvData,reader,data)
         this.fileContent = csvData;
         let csvRecordsArray = csvData.split(/\r\n|\n/);///\r\n|\n/
   
         csvRecordsArray = _.filter(csvRecordsArray,function(o){return o!="";});
-        // console.log(csvRecordsArray)
+        
         var headerLength = -1;
         if(ConstantsService.isHeaderPresentFlag){
           let headersRow = this._fileUtil.getHeaderArray(csvRecordsArray, ConstantsService.tokenDelimeter);
@@ -242,6 +243,7 @@ export class UserhomeComponent implements OnInit {
         });
       };
     }catch(e){
+      // console.log("error",e)
       this.logServ.putErrorInPouch("fileChangeListener()","File upload error caught","Some issue with uploaded file,"+JSON.stringify(e),"1");
     }
 

@@ -76,8 +76,13 @@ export class UserhomemodelComponent implements OnInit {
         address:value[0],
         tokens:value[1]
       });
+      // console.log("row",value[1],this.totalTXTokens,parseInt(value[1]))
       this.totalTXTokens = this.totalTXTokens+parseInt(value[1]);
     });
+
+    let sumOf =  _.sumBy(details,(o)=>{return parseFloat(o[1]);})
+    // console.log(sumOf)
+    this.totalTXTokens = sumOf;
 
     this.csvParseDetail = rows;
 
