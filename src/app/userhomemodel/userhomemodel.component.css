@@ -87,8 +87,9 @@ button.errorbtn, button.errorbtn.mat-button[disabled][disabled] {
     margin-bottom: 4%;
 }
 
-.failureimg {
+.failureimg, .successimg {
     font-size: 15px;
+    font-weight: 700;
     font-family: sans-serif;
     word-break: break-all;
 }

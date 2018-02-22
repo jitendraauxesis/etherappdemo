@@ -164,7 +164,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);
                 this.initialView = 2;
                 this.isSuccessinitialView = true;
-                this.successmessage = 'Total '+this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses+' addresses. Token confirmations may took time wait until confirmations is done by blockchain.';
+                this.successmessage = 'Total '+this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses+' addresses. All the tokens confirmations may took time wait until confirmations is done by blockchain.';
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));

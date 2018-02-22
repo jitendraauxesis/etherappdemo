@@ -278,7 +278,7 @@ export class UserhomesinglemodelComponent implements OnInit {
             this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
             .on('transactionHash', (hash)=>{
                 // console.log(hash)
-                this.successmessage = tt+' tokens has been transfer to '+'<a class="alink" href="'+this.viewAddress+firstAdd+'" target="_blank">'+firstAdd+'</a> with transaction hash <a class="alink" href="'+this.viewHash+hash+'" target="_blank">'+hash+'</a>.';
+                this.successmessage = tt+' tokens has been transfer to '+'<a class="alink" href="'+this.viewAddress+firstAdd+'" target="_blank">'+firstAdd+'</a> with transaction hash <a class="alink" href="'+this.viewHash+hash+'" target="_blank">'+hash+'</a>. Token confirmations may took time wait until confirmations is done by blockchain.';
               
                 let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
                 // console.log(ddata)
