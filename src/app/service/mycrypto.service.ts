@@ -24,17 +24,19 @@ export class MycryptoService {
 
       //global vals
       this.saveToLocalURL("SISNODEURL","http://localhost:3000/");
-      this.saveToLocalURL("SISWEB3URL","https://mainnet.infura.io/2H9y3HfwB9FOuy0Gqr4m");
+      this.saveToLocalURL("SISWEB3URL","https://mainnet.infura.io/2H9y3HfwB9FOuy0Gqr4m");//"http://159.89.14.24:8545");//
       this.saveToLocal("ViewTransactionAddressURL","https://etherscan.io/address/");
       this.saveToLocal("ViewTransactionHashURL","https://etherscan.io/tx/");
     }
+    setTimeout(()=>{this.saveInitVars();},500);
   }
 
   saveInitVars(){
     this.saveToLocalURL("SISNODEURL","http://localhost:3000/");
-    this.saveToLocalURL("SISWEB3URL","https://mainnet.infura.io/2H9y3HfwB9FOuy0Gqr4m");
+    this.saveToLocalURL("SISWEB3URL","http://159.89.14.24:8545");//"https://mainnet.infura.io/2H9y3HfwB9FOuy0Gqr4m");
     this.saveToLocal("ViewTransactionAddressURL","https://etherscan.io/address/");
     this.saveToLocal("ViewTransactionHashURL","https://etherscan.io/tx/");
+    console.log("always in ",this.retrieveFromLocalURL("SISWEB3URL"))
   }
 
   InitKeyGet():String{

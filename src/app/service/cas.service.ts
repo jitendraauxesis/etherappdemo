@@ -17,7 +17,7 @@ export class CasService {
 
   web3;
 
-  constructor(
+  constructor( 
     public mycryptoService:MycryptoService,
     private http:Http
   ) { 

@@ -217,7 +217,7 @@ export class UserhomeComponent implements OnInit {
         this.csvRecords = this._fileUtil.getDataRecordsArrayFromCSVFile(csvRecordsArray, 
             headerLength, ConstantsService.validateHeaderAndRecordLengthFlag, ConstantsService.tokenDelimeter);
         
-        // console.log(this.csvRecords)
+        // console.log(_.size(this.csvRecords)) 
         
         // not available
         if(this.csvRecords == null){
@@ -225,17 +225,25 @@ export class UserhomeComponent implements OnInit {
           this.fileReset();
         }
         else{
-          //file content available    
-          // // console.log("this.csvRecords",this.csvRecords)
-          this.uploadForm.get('ufile').setValue({
-            filename: file.name,
-            filetype: file.type,
-            filesize: file.size,
-            value: reader.result,
-            lastmodified:file.lastModified,
-            lastmodifieddate:file.lastModifiedDate
-          }) 
-          // // console.log("ok")
+          let size = _.size(this.csvRecords)
+          if(size > 200){
+            this.snackBar.open('CSV file limit exceed. 200 addresses can be allowed for csv file.','',{
+              duration:4000
+            });
+            this.fileReset();
+          }else{
+            //file content available    
+            // // console.log("this.csvRecords",this.csvRecords)
+            this.uploadForm.get('ufile').setValue({
+              filename: file.name,
+              filetype: file.type,
+              filesize: file.size,
+              value: reader.result,
+              lastmodified:file.lastModified,
+              lastmodifieddate:file.lastModifiedDate
+            }) 
+            // // console.log("ok")
+          }
         }    
       }
   
