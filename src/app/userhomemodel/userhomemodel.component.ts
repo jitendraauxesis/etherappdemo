@@ -64,7 +64,7 @@ export class UserhomemodelComponent implements OnInit {
     }
     else{
       this.isCSVValid = false;
-    }
+    } 
 
     let details = csvFileContent.csvData;
     let rows = [];
@@ -152,7 +152,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);                
                 this.initialView = 2;
                 this.isSuccessinitialView = false;
-                this.successmessage = "One of token transfer failed";
+                this.successmessage = "One of token transfer failed.";
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Unsuccessful transaction","Response:"+JSON.stringify(d));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
@@ -164,7 +164,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);
                 this.initialView = 2;
                 this.isSuccessinitialView = true;
-                this.successmessage = 'Total '+this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses+' addresses';
+                this.successmessage = 'Total '+this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses+' addresses. Token confirmations may took time wait until confirmations is done by blockchain.';
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
