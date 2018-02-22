@@ -24,7 +24,7 @@ export class CasService {
     if (typeof this.web3 !== 'undefined') {
       this.web3 = new Web3(this.web3.currentProvider);
     } else {
-        let url = this.mycryptoService.retrieveFromLocalURL("SISWEB3URL");
+        let url = this.mycryptoService.web3url;//this.mycryptoService.retrieveFromLocalURL("SISWEB3URL");
         this.web3 = new Web3(new Web3.providers.HttpProvider(url.toString()));
     }
     console.log("this.web3",this.web3);

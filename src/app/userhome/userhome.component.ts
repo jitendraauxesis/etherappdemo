@@ -71,6 +71,7 @@ export class UserhomeComponent implements OnInit {
 
     setTimeout(()=>{
       // this.openModal();
+      this.mycryptoService.saveInitVars();
     },1000)
     
 

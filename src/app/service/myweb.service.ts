@@ -26,7 +26,7 @@ export class MywebService {
     if (typeof this.web3 !== 'undefined') {
         this.web3 = new Web3(this.web3.currentProvider);
     } else {
-        this.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8008"));
+        this.web3 = new Web3(new Web3.providers.HttpProvider("http://159.89.14.24:8545"));//"http://127.0.0.1:8008"));
     }
     console.log("this.web3",this.web3);
     // console.log(Buffer)
