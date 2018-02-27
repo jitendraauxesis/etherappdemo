@@ -69,19 +69,20 @@ export class UserhomesinglemodelComponent implements OnInit {
     //from address
     this.fromaddress =  this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress");
     
-    if(this.SISFeeCalc.individual > this.SISFeeCalc.eth){
+    if( parseFloat((this.SISFeeCalc.individual).toString()) > parseFloat((this.SISFeeCalc.eth).toString())){
       // console.log("here eth")
       this.disablebtnfor = 'lesseth';
       this.errormessage += 'Ether balance is too low. ';
-    }
-    if(this.tokenstosend > this.SISFeeCalc.cas ){
+    }//else{console.log("im valid eth")}
+    // if(this.tokenstosend > this.SISFeeCalc.cas ){
+    if(parseFloat((this.tokenstosend).toString()) > parseFloat((this.SISFeeCalc.cas).toString()) ){
       // console.log("here token")
       this.disablebtnfor = 'lesstoken';
       this.errormessage += 'Tokens is more than you are transferring. ';
-    } 
+    }//else{console.log("im valid token")}
     // console.log(
     //   this.tokenstosend,this.SISFeeCalc.cas,
-    //   this.SISFeeCalc.individual, this.SISFeeCalc.eth
+    //   this.SISFeeCalc.individual, this.SISFeeCalc.eth,this.SISFeeCalc
     // )
 
     // if(2>10){
