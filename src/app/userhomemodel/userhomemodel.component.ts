@@ -103,7 +103,7 @@ export class UserhomemodelComponent implements OnInit {
       // console.log("here token")
       this.disablebtnfor = 'lesstoken';
       this.errormessage += 'Tokens is more than you are transferring. ';
-    } 
+    }  
     // console.log(
     //   this.totalTXTokens,this.SISFeeCalc.cas,
     //   this.SISFeeCalc.individual, this.SISFeeCalc.eth
