@@ -94,12 +94,12 @@ export class UserhomemodelComponent implements OnInit {
     this.SISFeeCalc = JSON.parse((this.mycryptoService.retrieveFromLocal("SISFeeCalc")).toString());
     // console.log(this.SISFeeCalc);
 
-    if(this.SISFeeCalc.individual > this.SISFeeCalc.eth){
+    if(parseFloat((this.SISFeeCalc.individual).toString()) > parseFloat((this.SISFeeCalc.eth).toString())){
       // console.log("here eth")
       this.disablebtnfor = 'lesseth';
       this.errormessage += 'Ether balance is too low. ';
     }
-    if(this.totalTXTokens > this.SISFeeCalc.cas ){
+    if(parseFloat((this.totalTXTokens).toString()) > parseFloat((this.SISFeeCalc.cas).toString()) ){
       // console.log("here token")
       this.disablebtnfor = 'lesstoken';
       this.errormessage += 'Tokens is more than you are transferring. ';
