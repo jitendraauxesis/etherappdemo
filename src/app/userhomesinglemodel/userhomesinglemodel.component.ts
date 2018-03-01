@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { PouchactivityService } from '../service/pouchactivity.service';
 import { PouchlogsService } from '../service/pouchlogs.service';
+import { CouchdblogsService } from '../service/couchdblogs.service';
 @Component({
   selector: 'app-userhomesinglemodel',
   templateUrl: './userhomesinglemodel.component.html',
@@ -44,7 +45,8 @@ export class UserhomesinglemodelComponent implements OnInit {
     public snackBar: MatSnackBar,
     public mycryptoService:MycryptoService,
     public activityServ:PouchactivityService,
-    public logServ:PouchlogsService
+    public logServ:PouchlogsService,
+    public couchdblogsService:CouchdblogsService
   ) { 
     this.web3 = this.casService.init();
   }
@@ -111,6 +113,7 @@ export class UserhomesinglemodelComponent implements OnInit {
 
   next(arg){
     this.initialView = arg;
+    this.couchdblogsService.putErrorInPouch("next()","Modal window change to index "+arg,"","6","UserhomesinglemodelComponent","log");
   }
 
   callsubmit(){
@@ -147,8 +150,8 @@ export class UserhomesinglemodelComponent implements OnInit {
                 this.successmessage = dt.message;
                 this.initialView = 2;
                 this.ngxloading  = false;
-                this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
-                
+                this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Unsuccessful transaction","Response:"+JSON.stringify(d));
+                this.couchdblogsService.putErrorInPouch("callsubmit()","Unsuccessful transaction ",JSON.stringify(d),"4","UserhomesinglemodelComponent","error");
               }else if(dt.status == "success"){
                 this.snackBar.open(dt.message,'',{
                   duration:2000
@@ -157,7 +160,7 @@ export class UserhomesinglemodelComponent implements OnInit {
                 this.initialView = 2;
                 this.ngxloading  = false;
                 this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
-                
+                this.couchdblogsService.putErrorInPouch("callsubmit()","Successful transaction ",JSON.stringify(d),"6","UserhomesinglemodelComponent","success");
               }
               else{
                 this.ngxloading  = false;
@@ -173,7 +176,7 @@ export class UserhomesinglemodelComponent implements OnInit {
                 duration:2000
               });
               this.logServ.putErrorInPouch("callsubmit()","Single token transfer failed","Token transfer unsuccessful due to error,"+JSON.stringify(e),"1");
-        
+              this.couchdblogsService.putErrorInPouch("callsubmit()","Unsuccessful single token transaction ",JSON.stringify(e),"4","UserhomesinglemodelComponent","error");
             }
           );
         }else{
@@ -183,7 +186,7 @@ export class UserhomesinglemodelComponent implements OnInit {
         }
       }catch(e){
         this.logServ.putErrorInPouch("callsubmit()","Invalid private key enter","For multiple token transfer","3");
-        
+        this.couchdblogsService.putErrorInPouch("callsubmit()","Unsuccessful single transaction privatekey invalid",JSON.stringify(e),"4","UserhomesinglemodelComponent","error");
         this.snackBar.open('Private Key Is Invalid','',{
           duration:2000
         });
@@ -193,7 +196,7 @@ export class UserhomesinglemodelComponent implements OnInit {
 
   sendTokens(){
     return new Promise((resolve,reject)=>{
-      
+      try{
     let ContractABI = this.mycryptoService.retrieveFromLocal("SISContractABI");
     let ContractByteCode = this.mycryptoService.retrieveFromLocal("SISContractByteCode");
     let ContractData = this.mycryptoService.retrieveFromLocal("SISContractData");
@@ -294,6 +297,7 @@ export class UserhomesinglemodelComponent implements OnInit {
                     distributed:'single',
                     timestamp:new Date()
                   }])); 
+                  this.couchdblogsService.putErrorInPouch("sendTokens()","Successful transaction ",(this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString(),"6","UserhomesinglemodelComponent","success");
                 }else{
                   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
                   // console.log(ddata,this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists"))
@@ -329,6 +333,8 @@ export class UserhomesinglemodelComponent implements OnInit {
                     // // console.log(arr)
                     this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
                     let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
+
+                    this.couchdblogsService.putErrorInPouch("sendTokens()","Successful transaction ",JSON.stringify(distribute),"6","UserhomesinglemodelComponent","success");                    
                     // console.log(dd1)
                   }
                 }
@@ -390,6 +396,7 @@ export class UserhomesinglemodelComponent implements OnInit {
                     timestamp:new Date(),
                     message:ee.message
                   }])); 
+                  this.couchdblogsService.putErrorInPouch("sendTokens()","Unsuccessful transaction ",JSON.stringify(ee),"4","UserhomesinglemodelComponent","error");
                 }else{
                   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
                   
@@ -421,6 +428,8 @@ export class UserhomesinglemodelComponent implements OnInit {
                     this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
                     let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
                     // console.log(dd1)
+
+                    this.couchdblogsService.putErrorInPouch("sendTokens()","Unsuccessful transaction ",JSON.stringify(ee),"4","UserhomesinglemodelComponent","error");                    
                   }
                 }
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsJSON",JSON.stringify({
@@ -440,7 +449,9 @@ export class UserhomesinglemodelComponent implements OnInit {
     //   }
     // );
 
-    
+      }catch(e){
+        
+      }
     })
   }
 
@@ -461,7 +472,14 @@ export class UserhomesinglemodelComponent implements OnInit {
       this.fileEXPORTDATABASE = btoa(this.fileEXPORTDATA);
       let val =  "data:text/csv;base64,"+this.fileEXPORTDATABASE;
       let filename = moment().unix()+"-"+this.tokenstosend+"-CAS-Token-Distribution";
-      this.downloadURI(val, filename+".csv");
+      
+      this.snackBar.open('Wait... file is preparing to download','',{
+        duration:2000
+      }).afterDismissed().subscribe(d=>{
+        // setTimeout(()=>{
+          this.downloadURI(val, filename+".csv");
+        // },2000);
+      });
     }else if(type == "json"){
       // console.log("type",type,data)
 
@@ -472,7 +490,14 @@ export class UserhomesinglemodelComponent implements OnInit {
       this.fileEXPORTJSONDATABASE = btoa(JSON.stringify(this.fileEXPORTJSONDATA));
       let val =  "data:application/json;base64,"+this.fileEXPORTJSONDATABASE;
       let filename = moment().unix()+"-"+this.tokenstosend+"-CAS-Token-Distribution";
-      this.downloadURI(val, filename+".json");
+      
+      this.snackBar.open('Wait... file is preparing to download','',{
+        duration:2000
+      }).afterDismissed().subscribe(d=>{
+        // setTimeout(()=>{
+          this.downloadURI(val, filename+".json");
+        // },2000);
+      });
       // this.downloadURI(val.value, filename+".csv");
     }
   }

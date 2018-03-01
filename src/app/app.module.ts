@@ -54,6 +54,7 @@ import { FileUtilService } from './interfaces/file-util.service';
 import { ConstantsService } from './interfaces/constants.service';
 import { PouchlogsService } from './service/pouchlogs.service';
 import { PouchactivityService } from './service/pouchactivity.service';
+import { CouchdblogsService } from './service/couchdblogs.service';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -67,6 +68,8 @@ import { TransactionhistoryComponent } from './transactionhistory/transactionhis
 import { SettingsComponent } from './settings/settings.component';
 import { HistorydetailComponent } from './historydetail/historydetail.component';
 import { SettingdialogComponent } from './settingdialog/settingdialog.component';
+import { UserhomeglobalhistoryComponent } from './userhomeglobalhistory/userhomeglobalhistory.component';
+import { UserhomeglobalhistorylogsComponent } from './userhomeglobalhistorylogs/userhomeglobalhistorylogs.component';
 
 
 
@@ -121,7 +124,9 @@ export class DemoMaterialModule {}
     TransactionhistoryComponent,
     SettingsComponent,
     HistorydetailComponent,
-    SettingdialogComponent
+    SettingdialogComponent,
+    UserhomeglobalhistoryComponent,
+    UserhomeglobalhistorylogsComponent
   ],
   entryComponents: [
     UserhomemodelComponent,
@@ -156,7 +161,8 @@ export class DemoMaterialModule {}
     FileUtilService,
     ConstantsService,
     PouchlogsService,
-    PouchactivityService
+    PouchactivityService,
+    CouchdblogsService
   ],
   bootstrap: [AppComponent]
 })

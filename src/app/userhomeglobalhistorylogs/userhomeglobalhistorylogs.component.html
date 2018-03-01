@@ -1,0 +1,49 @@
+<app-navbar></app-navbar>
+<mat-divider></mat-divider>
+<ngx-loading [show]="ngxloading"></ngx-loading>
+<mat-card class="panelcard">
+  <mat-card-content>
+    <div class="tablecontent" *ngIf="isDataAvailable == true">
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Description</th>
+            <th>Schema</th>
+            <th>Others</th>
+            <th>Level</th>
+            <!-- <th>View</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of tableContent">
+            <td>
+              {{t.momento}}<br>
+              {{convertToDate(t.momento)}}
+            </td>
+            <td>
+              <p >{{t.data.description}}</p>
+            </td>
+            <td>
+              <b>Page:</b>&nbsp;{{t.data.page}}<br>
+              <b>Component:</b>&nbsp;{{t.data.component}}<br>
+              <b>Function:</b>&nbsp;{{t.data.schema}}
+            </td>
+            <td class="extranotes" [innerHTML]="t.data.tracker">
+                
+            </td>
+            <td>
+              {{t.data.severity}}
+            </td>
+            <!-- <td>
+                <img src="assets/lib/image/view.png" class="eyebtn" (click)="viewbtn(t)">
+            </td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="nodataContent" *ngIf="isDataAvailable == false">
+      <img src="assets/lib/image/nodata-available.jpg" class="nodata">
+    </div>
+  </mat-card-content>
+</mat-card>

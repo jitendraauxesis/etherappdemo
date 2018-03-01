@@ -9,6 +9,8 @@ import { UserhomecsvdetailComponent } from './userhomecsvdetail/userhomecsvdetai
 import { TransactionhistoryComponent } from './transactionhistory/transactionhistory.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HistorydetailComponent } from './historydetail/historydetail.component';
+import { UserhomeglobalhistoryComponent } from './userhomeglobalhistory/userhomeglobalhistory.component';
+import { UserhomeglobalhistorylogsComponent } from './userhomeglobalhistorylogs/userhomeglobalhistorylogs.component';
 
 const routes:Routes = [
     /**
@@ -49,6 +51,16 @@ const routes:Routes = [
         path: "settings",
         component: SettingsComponent,
         data: { title: 'Settings | CAS Distributor' }
+    },
+    {
+        path: "logs",
+        component:UserhomeglobalhistoryComponent,
+        data: { title: 'Logs | CAS Distributor' }        
+    },
+    {
+        path: "logs/:id",
+        component:UserhomeglobalhistorylogsComponent,
+        data: { title: 'Logs | CAS Distributor' }
     },
     {
         path: "**",

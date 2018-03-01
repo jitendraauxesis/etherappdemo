@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { PouchactivityService } from '../service/pouchactivity.service';
 import { PouchlogsService } from '../service/pouchlogs.service';
+import { CouchdblogsService } from '../service/couchdblogs.service';
 @Component({
   selector: 'app-userhomemodel',
   templateUrl: './userhomemodel.component.html',
@@ -45,7 +46,8 @@ export class UserhomemodelComponent implements OnInit {
     public snackBar: MatSnackBar,
     public mycryptoService:MycryptoService,
     public activityServ:PouchactivityService,
-    public logServ:PouchlogsService
+    public logServ:PouchlogsService,
+    public couchdblogsService:CouchdblogsService
   ) { 
     this.web3 = this.casService.init();
   }
@@ -114,7 +116,7 @@ export class UserhomemodelComponent implements OnInit {
 
   next(arg){
     this.initialView = arg;
-
+    // this.couchdblogsService.putErrorInPouch("next()","Modal window change to index "+arg,"","6","UserhomemodelComponent","log");
   }
 
   validate(){
@@ -130,7 +132,7 @@ export class UserhomemodelComponent implements OnInit {
         duration:2000
       });
     }else{
-      try{
+      try{ 
         let wallet = new ethers.Wallet(this.privatekey);
         // // console.log(wallet)
         let address = wallet.address;
@@ -156,6 +158,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Unsuccessful transaction","Response:"+JSON.stringify(d));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
+                this.couchdblogsService.putErrorInPouch("callsubmit()","One of unsuccessful transaction ",JSON.stringify(d),"4","UserhomemodelComponent","warning");
               }else if(dt.status == "success"){
                 this.ngxloading  = false;
                 this.snackBar.open('Token transfer success','',{
@@ -168,7 +171,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
-                
+                this.couchdblogsService.putErrorInPouch("callsubmit()","Successful transaction ",JSON.stringify(d),"6","UserhomemodelComponent","success");
               }else{
                 this.ngxloading  = false;
                 this.snackBar.open('Token transfer failed','',{
@@ -183,7 +186,7 @@ export class UserhomemodelComponent implements OnInit {
                 duration:2000
               });
               this.logServ.putErrorInPouch("callsubmit()","CSV Multiple token transfer failed","Token transfer unsuccessful due to error,"+JSON.stringify(e),"1");
-        
+              this.couchdblogsService.putErrorInPouch("callsubmit()","CSV transaction failed",JSON.stringify(e),"4","UserhomemodelComponent","error");
             }
           );
           
@@ -195,7 +198,7 @@ export class UserhomemodelComponent implements OnInit {
         }
       }catch(e){
         this.logServ.putErrorInPouch("callsubmit()","Invalid private key enter","For multiple token transfer","3");
-        
+        this.couchdblogsService.putErrorInPouch("callsubmit()","CSV transaction failed due to invalid private key",JSON.stringify(e),"4","UserhomemodelComponent","error");
         this.snackBar.open('Private Key Is Invalid','',{
           duration:2000
         });
@@ -264,206 +267,242 @@ export class UserhomemodelComponent implements OnInit {
     // // console.log("asdf",this.i++);
   }
 
+  appendDATAHASHES = [];
   sendTokens(){
     // this.ngxloading  = true;
     return new Promise((resolve,reject)=>{
-      let ContractABI = this.mycryptoService.retrieveFromLocal("SISContractABI");
-      let ContractAddress = this.mycryptoService.retrieveFromLocal("SISContractAddress");
-      let ContractData = this.mycryptoService.retrieveFromLocal("SISContractData");
-      
-      let checkaddress = this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress");
-      let creating_address = checkaddress;//this.fromaddress;
-      let priv = this.privatekey;//this.mycryptoService.retrieveFromLocal("SISUPrivateKey");//
+      try{
+        let ContractABI = this.mycryptoService.retrieveFromLocal("SISContractABI");
+        let ContractAddress = this.mycryptoService.retrieveFromLocal("SISContractAddress");
+        let ContractData = this.mycryptoService.retrieveFromLocal("SISContractData");
+        
+        let checkaddress = this.mycryptoService.retrieveFromLocal("SISTokenTransferFromAddress");
+        let creating_address = checkaddress;//this.fromaddress;
+        let priv = this.privatekey;//this.mycryptoService.retrieveFromLocal("SISUPrivateKey");//
 
-      let csvfor = this.csvParseDetail;
+        let csvfor = this.csvParseDetail;
 
-      let appendDATAHASHES = [];
 
-      let value = csvfor;
-      let appendValue = csvfor;
-      let stringhashes = '';let stringaddresses = '';
-      let globalnonce;
-      let incr = _.size(csvfor);
-      // csvfor.forEach((value,key) => {
-      // });
-      var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
-      const gasPrice = this.web3.eth.getGasPrice();//1800000000;
-      // var gasLimit = 1302200;
-                                            
-      const nonce = this.web3.eth.getTransactionCount(creating_address);
-      nonce.then(
-        dnonce => {
-          globalnonce = dnonce;
-          
-          // var gasLimit = this.web3.eth.estimateGas({ 
-          //   to: creating_address, // data: '0x' + bytecode, 
-          //   data: ContractData, // from: wallet.address, 
-          // }).then(
-          //   valgas =>{ 
-              var gasLimit = 1302200;//valgas;
-              csvfor.forEach((value,key) => {
-                // for(let key=0;key<value.length;key++){
-                // // console.log(value,key,value[key],value[key].address,value[key].tokens)
-                // // console.log(value,value.address,value.tokens)
-                stringaddresses += value.address;  
+        let value = csvfor;
+        let appendValue = csvfor;
+        let stringhashes = '';let stringaddresses = '';
+        let globalnonce;
+        let incr = _.size(csvfor);
+        // csvfor.forEach((value,key) => {
+        // });
+        var contract = new this.web3.eth.Contract(JSON.parse(ContractABI.toString()), ContractAddress);
+        const gasPrice = this.web3.eth.getGasPrice();//1800000000;
+        // var gasLimit = 1302200;
+                                              
+        const nonce = this.web3.eth.getTransactionCount(creating_address);
+        nonce.then(
+          dnonce => {
+            globalnonce = dnonce;
+            
+            // var gasLimit = this.web3.eth.estimateGas({ 
+            //   to: creating_address, // data: '0x' + bytecode, 
+            //   data: ContractData, // from: wallet.address, 
+            // }).then(
+            //   valgas =>{ 
+                var gasLimit = 1302200;//valgas;
 
-                
+                var nonceHex;
+                Promise.all([gasPrice])
+                .then(
+                  (d)=>{
+                    console.log("d:",d)
+                    var key = 0;  
+                    // let interva = setInterval(()=>{
+                    var myLoop  = () => {           //  create a loop function
+                      setTimeout( ()=> { 
+                    // csvfor.forEach((value,key) => {
+                      //start forloop
+                          // for(let key=0;key<value.length;key++){
+                          // // console.log(value,key,value[key],value[key].address,value[key].tokens)
+                          // // console.log(value,value.address,value.tokens)
+                          let value = _.nth(csvfor,key);
+                          stringaddresses += value.address;  
 
-               
-                    // // console.log("gasLimit:",valgas)
-                    // // console.log(gasLimit)
-                    // // console.log("gasPrice:",gasPrice);
-                    // const nonce = this.web3.eth.getTransactionCount(creating_address);
+                      
 
-                    var nonceHex;
-                    Promise.all([gasPrice])
-                    .then(
-                      (d)=>{
-                        // // console.log("gasPricePromise:",d)
-                        const gasPriceHex = this.web3.utils.toHex(d[0]);
-                        const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
-                        // globalnonce = globalnonce++;
-                        // console.log(globalnonce)
-                        var nonceHex = this.web3.utils.toHex(globalnonce++);
-                        // globalnonce = d[1];
-                        // // console.log("contract:",contract,"\nCA::",ContractAddress)
-                        
+                    
+                          console.log("data:",key,value)
+                          // // console.log(gasLimit)
+                          // const nonce = this.web3.eth.getTransactionCount(creating_address);
 
-                        // contract.methods.balanceOf(creating_address)
-                        // .call((err, ress)=>{ 
-                        //   // // console.log("ERR:",err, "Response BAL:", ress); 
-                        // })
-                        var tokens = value.tokens;
-                        var firstAdd = value.address;
-                        
-                        tokens = this.web3.utils.toWei(tokens,'ether');
-                        // // console.log(tokens);
-                        
-                        tokens = tokens.toString('hex');
-                        // // console.log(tokens);
+                          // var nonceHex;
+                          // Promise.all([gasPrice])
+                          // .then(
+                          //   (d)=>{
+                              // // console.log("gasPricePromise:",d)
+                              const gasPriceHex = this.web3.utils.toHex(d[0]);
+                              const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
+                              // globalnonce = globalnonce++;
+                              // console.log(globalnonce)
+                              var nonceHex = this.web3.utils.toHex(globalnonce++);
+                              console.log("globalnonce:",globalnonce,value.tokens);
+                              // globalnonce = d[1];
+                              // // console.log("contract:",contract,"\nCA::",ContractAddress)
+                              
 
-                        // tokens = tokens*Math.pow(10,-18);
-                        // // console.log(tokens)
+                              // contract.methods.balanceOf(creating_address)
+                              // .call((err, ress)=>{ 
+                              //   // // console.log("ERR:",err, "Response BAL:", ress); 
+                              // })
+                              var tokens = value.tokens;
+                              var firstAdd = value.address;
+                              
+                              tokens = this.web3.utils.toWei(tokens,'ether');
+                              // // console.log(tokens);
+                              
+                              tokens = tokens.toString('hex');
+                              // // console.log(tokens);
 
-                        var hexdata = contract.methods.transfer(firstAdd,tokens)
-                        .encodeABI();
-                        // // console.log("asdasdas", hexdata);
+                              // tokens = tokens*Math.pow(10,-18);
+                              // // console.log(tokens)
 
-                        const rawTx = {
-                          nonce: nonceHex,
-                          gasPrice: gasPriceHex,
-                          gasLimit: gasLimitHex,
-                          data: hexdata,
-                          to: ContractAddress
-                        };
-                        const tx = new Tx(rawTx);
-                        // // console.log("rawTX:", tx.serialize().toString('hex'),rawTx); 
-                        var pk = priv.toString();
-                        pk = pk.substr(2,pk.length);
-                        var pk2 = Buffer.Buffer.from(pk,'hex');
-                        tx.sign(pk2);
-                        const serializedTx = tx.serialize();
-                        this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
-                        .on('transactionHash', (hash)=>{
-                            // console.log(hash)
-                            // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
-                            stringhashes += hash+',';
-                            let aa = {
-                              position:key,
-                              // address:value[0],
-                              tokens:value.tokens,
-                              address:value.address, 
-                              hash:hash,
-                              response:"Successful token transfer"
-                            };
-                            appendDATAHASHES.push(aa); 
-                            // // console.log("appendDATAHASHES",appendDATAHASHES)
-                            // // console.log(incr,key);
-                            let akey = key+1;
-                            if(incr == akey){
-                              // this.ngxloading  = false;
-                              // console.log("I append data "+incr+" "+akey,appendDATAHASHES)
-                              resolve({status:"success",data:appendDATAHASHES});
-                            }
-                            // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
-                            // // console.log(ddata)
-                            // if(ddata ==null || ddata == ""){
-                            //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
-                            // }else{
-                            //   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
-                            //   let arr = [];
-                            //   ddata.forEach((value,key) => {
-                                
-                            //   });
-                            //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
-                            // }
-                            
-                        })
-                        // .on('receipt',(receipt)=>{
-                        //   console.log(receipt) 
-                        //   stringhashes += receipt.transactionHash+',';
-                        //   let aa = {
-                        //     position:key,
-                        //     // address:value[0],
-                        //     tokens:value.tokens,
-                        //     address:value.address, 
-                        //     hash:receipt.transactionHash,
-                        //     response:"Successful token transfer"
-                        //   };
-                        //   appendDATAHASHES.push(aa); 
-                        //   // // console.log("appendDATAHASHES",appendDATAHASHES)
-                        //   console.log(incr,key);
-                        //   let akey = key+1;
-                        //   if(incr == akey){
-                        //     // this.ngxloading  = false;
-                        //     console.log("I append data "+incr+" "+akey,appendDATAHASHES)
-                        //     resolve({status:"success",data:appendDATAHASHES});
-                        //   } 
-                        // })
-                        .on('error',(ee)=>{
-                          // this.ngxloading  = false;
-                          // // console.log('error:',ee,JSON.stringify(ee))
+                              var hexdata = contract.methods.transfer(firstAdd,tokens)
+                              .encodeABI();
+                              // // console.log("asdasdas", hexdata);
 
-                          if(ee){
-                            stringhashes += null+',';
-                            let aa = {
-                              position:key,
-                              // address:value[0],
-                              tokens:value.tokens,
-                              address:value.address,
-                              hash:null,
-                              message:'Token transfer failed',
-                              response:ee.message
-                            };
-                            appendDATAHASHES.push(aa); 
-                            resolve({status:"infail",data:appendDATAHASHES});
-                          }
-                          // reject({status:"fail",message:ee});
-                        }); 
-                      }
-                    )
-                
-              });
-          //   }
-          // );
-          // console.log("appendDATAHASHES",appendDATAHASHES) 
-        }
-      )
-      
-      // return appendDATAHASHES;
-      // if(appendDATAHASHES == null){
-      //   this.appendToRECORDS(stringhashes,stringaddresses,creating_address,this.totalTXTokens,appendDATAHASHES);
-      //   // resolve({status:"success",data:appendDATAHASHES});
-      //   // console.info("asdf",{status:"success",data:appendDATAHASHES})
-      // }else{
-      //   // reject({status:"fail",message:"Hash not generated"});
-      //   // console.error({status:"fail",message:"Hash not generated"})
-      // }
-      // appendDATAHASHES.forEach((value,key)=>{
-      //   if(value.hash == null || value.hash == ""){
-      //     reject({status:"fail",message:ee})
-      //   }
-      // })
+                              const rawTx = {
+                                nonce: nonceHex,
+                                gasPrice: gasPriceHex,
+                                gasLimit: gasLimitHex,
+                                data: hexdata,
+                                to: ContractAddress
+                              };
+                              const tx = new Tx(rawTx);
+                              // // console.log("rawTX:", tx.serialize().toString('hex'),rawTx); 
+                              var pk = priv.toString();
+                              pk = pk.substr(2,pk.length);
+                              var pk2 = Buffer.Buffer.from(pk,'hex');
+                              tx.sign(pk2);
+                              const serializedTx = tx.serialize();
+                              this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
+                              .on('transactionHash', (hash)=>{
+                                  // console.log(hash)
+                                  // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
+                                  stringhashes += hash+',';
+                                  let aa = {
+                                    position:value.position,
+                                    // address:value[0],
+                                    tokens:value.tokens,
+                                    address:value.address, 
+                                    hash:hash,
+                                    response:"Successful token transfer"
+                                  };
+                                  this.appendDATAHASHES.push(aa); 
+                                  // // console.log(incr,key);
+                                  let akey = key;
+                                  // console.log("appendDATAHASHES",this.appendDATAHASHES,incr, akey)
+                                  // let akey = key+1;
+                                  if(incr == value.position || (key+1)==value.position){
+                                    // this.ngxloading  = false;
+                                    // console.log("I append data "+incr+" "+akey,this.appendDATAHASHES)
+                                    // clearInterval(interva);
+                                    // this.couchdblogsService.putErrorInPouch("sendTokens()","Successful token transfer",JSON.stringify(this.appendDATAHASHES),"6","UserhomemodelComponent","success");
+                                  
+                                    resolve({status:"success",data:this.appendDATAHASHES});
+                                  }
+                                  // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
+                                  // // console.log(ddata)
+                                  // if(ddata ==null || ddata == ""){
+                                  //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
+                                  // }else{
+                                  //   ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
+                                  //   let arr = [];
+                                  //   ddata.forEach((value,key) => {
+                                      
+                                  //   });
+                                  //   this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(aa));
+                                  // }
+                                  
+                              })
+                              // .on('receipt',(receipt)=>{
+                              //   console.log(receipt) 
+                              //   stringhashes += receipt.transactionHash+',';
+                              //   let aa = {
+                              //     position:key,
+                              //     // address:value[0],
+                              //     tokens:value.tokens,
+                              //     address:value.address, 
+                              //     hash:receipt.transactionHash,
+                              //     response:"Successful token transfer"
+                              //   };
+                              //   appendDATAHASHES.push(aa); 
+                              //   // // console.log("appendDATAHASHES",appendDATAHASHES)
+                              //   console.log(incr,key);
+                              //   let akey = key+1;
+                              //   if(incr == akey){
+                              //     // this.ngxloading  = false;
+                              //     console.log("I append data "+incr+" "+akey,appendDATAHASHES)
+                              //     resolve({status:"success",data:appendDATAHASHES});
+                              //   } 
+                              // })
+                              .on('error',(ee)=>{
+                                // this.ngxloading  = false;
+                                // // console.log('error:',ee,JSON.stringify(ee))
+                                if(ee){
+                                  stringhashes += null+',';
+                                  let aa = {
+                                    position:value.position,
+                                    // address:value[0],
+                                    tokens:value.tokens,
+                                    address:value.address,
+                                    hash:null,
+                                    message:'Token transfer failed',
+                                    response:ee.message
+                                  };
+                                  this.appendDATAHASHES.push(aa);
+                                  // this.couchdblogsService.putErrorInPouch("sendTokens()","Unsuccessful token transfer",JSON.stringify(ee),"4","UserhomemodelComponent","error");
+                                  // clearInterval(interva);
+                                  resolve({status:"infail",data:this.appendDATAHASHES});
+                                }
+                                // reject({status:"fail",message:ee});
+                              }); 
+                          //   }
+                          // )
+                      // end forloop
+                    // });
+
+                          key++;                     //  increment the counter
+                          if (key < incr) {           //  if the counter < 10, call the loop function
+                            myLoop();             //  ..  again which will trigger another 
+                          }                        //  ..  setTimeout()
+                      }, 100)
+                    }
+
+                    myLoop();
+
+                  // },200);
+
+                  }
+                )
+            //   }
+            // );
+            // console.log("appendDATAHASHES",appendDATAHASHES) 
+          }
+        )
+        
+        // return appendDATAHASHES;
+        // if(appendDATAHASHES == null){
+        //   this.appendToRECORDS(stringhashes,stringaddresses,creating_address,this.totalTXTokens,appendDATAHASHES);
+        //   // resolve({status:"success",data:appendDATAHASHES});
+        //   // console.info("asdf",{status:"success",data:appendDATAHASHES})
+        // }else{
+        //   // reject({status:"fail",message:"Hash not generated"});
+        //   // console.error({status:"fail",message:"Hash not generated"})
+        // }
+        // appendDATAHASHES.forEach((value,key)=>{
+        //   if(value.hash == null || value.hash == ""){
+        //     reject({status:"fail",message:ee})
+        //   }
+        // })
+
+      }catch(e){
+        
+      }
     })
   }
 
@@ -554,7 +593,14 @@ export class UserhomemodelComponent implements OnInit {
       this.fileEXPORTDATABASE = btoa(this.fileEXPORTDATA);
       let val =  "data:text/csv;base64,"+this.fileEXPORTDATABASE;
       let filename = moment().unix()+"-"+this.totalTXTokens+"-CAS-Token-Distribution";
-      this.downloadURI(val, filename+".csv");
+      
+      this.snackBar.open('Wait... file is preparing to download','',{
+        duration:2000
+      }).afterDismissed().subscribe(d=>{
+        // setTimeout(()=>{
+          this.downloadURI(val, filename+".csv");  
+        // },2000);
+      });
     }else if(type == "json"){
       // console.log("type",type,data)
       data.forEach((value,key) => {
@@ -573,8 +619,16 @@ export class UserhomemodelComponent implements OnInit {
       this.fileEXPORTJSONDATABASE = btoa(JSON.stringify(this.fileEXPORTJSONDATA));
       let val =  "data:application/json;base64,"+this.fileEXPORTJSONDATABASE;
       let filename = moment().unix()+"-"+this.totalTXTokens+"-CAS-Token-Distribution";
-      this.downloadURI(val, filename+".json");
+      
       // this.downloadURI(val.value, filename+".csv");
+
+      this.snackBar.open('Wait... file is preparing to download','',{
+        duration:2000
+      }).afterDismissed().subscribe(d=>{
+        // setTimeout(()=>{
+          this.downloadURI(val, filename+".json");
+        // },2000);
+      });
     }
   }
   

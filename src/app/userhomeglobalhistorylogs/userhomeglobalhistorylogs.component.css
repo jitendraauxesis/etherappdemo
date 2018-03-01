@@ -1,0 +1,40 @@
+.nodataContent {
+    text-align: center;
+}
+.csvbtn{
+    /* background-color: #007f7f;
+    color: #fff; */
+    cursor: pointer;
+}
+
+.jsonbtn,.eyebtn {
+    /* background-color: #794044;
+    color: #fff; */
+    cursor: pointer;
+}
+table {
+    width: 100%;
+}
+
+table tr td {
+    text-align: center;
+}
+
+
+tbody tr:nth-child(odd){ background-color: #EEF0F4; }
+
+tr td {
+    margin-top: 5px;
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
+}
+
+.tablecontent{
+    overflow: overlay;
+}
+
+td.extranotes {
+    word-break: break-all;
+    font-size: 12px;
+    padding: 5px;
+}

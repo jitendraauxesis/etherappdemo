@@ -1,0 +1,22 @@
+<app-navbar></app-navbar>
+<mat-divider></mat-divider>
+<ngx-loading [show]="ngxloading"></ngx-loading>
+<mat-card class="panelcard">
+  <mat-card-content>
+    <div class="tablecontent" *ngIf="isDataAvailable == true">
+      <mat-card>
+        <mat-card-title>Total distributors {{total}}</mat-card-title>
+        <mat-card-subtitle>Click on below distributors list to view logs</mat-card-subtitle>
+      </mat-card>
+      <mat-list role="list">
+        <mat-list-item class="items" role="listitem" *ngFor="let t of tableContent" (click)="seefull(t)">
+          {{t.id}}
+          &nbsp;&nbsp;<i class="material-icons">account_box</i>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="nodataContent" *ngIf="isDataAvailable == false">
+      <img src="assets/lib/image/nodata-available.jpg" class="nodata">
+    </div>
+  </mat-card-content>
+</mat-card>

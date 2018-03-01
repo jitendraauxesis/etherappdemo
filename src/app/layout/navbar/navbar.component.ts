@@ -30,4 +30,8 @@ export class NavbarComponent implements OnInit {
   settings(){
     this.router.navigateByUrl("/settings");  
   }
+
+  logs(){
+    this.router.navigateByUrl("/logs");  
+  }
 }
