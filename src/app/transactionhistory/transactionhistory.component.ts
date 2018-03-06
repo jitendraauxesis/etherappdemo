@@ -66,6 +66,8 @@ export class TransactionhistoryComponent implements OnInit {
   fileEXPORTJSONDATA:any = [];
   fileEXPORTJSONDATABASE:any;
   download(t,type){
+    this.fileEXPORTDATA = "";
+    this.fileEXPORTJSONDATA = [];
     // let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
     // console.log("t",t,type)
     let filename = moment(new Date(t.timestamp)).unix()+"-CAS-Token-Distribution";

@@ -39,7 +39,7 @@ export class UserhomesinglemodelComponent implements OnInit {
 
   viewAddress:any = 'https://etherscan.io/address/';//'https://ropsten.etherscan.io/address/';
   viewHash:any = 'https://etherscan.io/tx/';
-
+  printStatments:any = [];
   constructor(
     public casService:CasService,
     public snackBar: MatSnackBar,
@@ -93,6 +93,7 @@ export class UserhomesinglemodelComponent implements OnInit {
     // if(0.002154336>0){
     //   // console.log("less/more eth")
     // }else{// console.log("grt token")}
+    this.printStatments.push({date:moment().unix(),message:"Single token transfer model open"});
   }
 
   showmsg(msg){
@@ -131,6 +132,7 @@ export class UserhomesinglemodelComponent implements OnInit {
       // this.initialView = 2;
       //verifying address and private key
       try{
+        this.printStatments.push({date:moment().unix(),message:"callsubmit called"});
         let wallet = new ethers.Wallet(this.privatekey);
         // // console.log(wallet)
         let address = wallet.address;
@@ -143,6 +145,7 @@ export class UserhomesinglemodelComponent implements OnInit {
               // console.log("PromiseMultiple:",d)
               let dt = JSON.parse(JSON.stringify(d));
               if(dt.status == "infail"){
+                this.printStatments.push({date:moment().unix(),message:"failed token transfer"});
                 this.snackBar.open(dt.message,'',{
                   duration:2000
                 });
@@ -151,8 +154,9 @@ export class UserhomesinglemodelComponent implements OnInit {
                 this.initialView = 2;
                 this.ngxloading  = false;
                 this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Unsuccessful transaction","Response:"+JSON.stringify(d));
-                this.couchdblogsService.putErrorInPouch("callsubmit()","Unsuccessful transaction ",JSON.stringify(d),"4","UserhomesinglemodelComponent","error");
+                this.couchdblogsService.putErrorInPouch("callsubmit()","Unsuccessful transaction ",JSON.stringify({datas:d,stats:this.printStatments}),"4","UserhomesinglemodelComponent","error");
               }else if(dt.status == "success"){
+                this.printStatments.push({date:moment().unix(),message:"success token transfer"});
                 this.snackBar.open(dt.message,'',{
                   duration:2000
                 });
@@ -160,7 +164,7 @@ export class UserhomesinglemodelComponent implements OnInit {
                 this.initialView = 2;
                 this.ngxloading  = false;
                 this.activityServ.putActivityInPouch("UserhomesinglemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
-                this.couchdblogsService.putErrorInPouch("callsubmit()","Successful transaction ",JSON.stringify(d),"6","UserhomesinglemodelComponent","success");
+                this.couchdblogsService.putErrorInPouch("callsubmit()","Successful transaction ",JSON.stringify({datas:d,stats:this.printStatments}),"6","UserhomesinglemodelComponent","success");
               }
               else{
                 this.ngxloading  = false;
@@ -197,6 +201,7 @@ export class UserhomesinglemodelComponent implements OnInit {
   sendTokens(){
     return new Promise((resolve,reject)=>{
       try{
+        this.printStatments.push({date:moment().unix(),message:"sendTokens() called"});
     let ContractABI = this.mycryptoService.retrieveFromLocal("SISContractABI");
     let ContractByteCode = this.mycryptoService.retrieveFromLocal("SISContractByteCode");
     let ContractData = this.mycryptoService.retrieveFromLocal("SISContractData");
@@ -246,10 +251,11 @@ export class UserhomesinglemodelComponent implements OnInit {
         .then(
           (d)=>{
             // console.log("gasPricePromise:",d)
+            this.printStatments.push({date:moment().unix(),message:"gasprice generated "+d[0]});
             const gasPriceHex = this.web3.utils.toHex(d[0]);
             const gasLimitHex = this.web3.utils.toHex(gasLimit);//valgas);
             var nonceHex = this.web3.utils.toHex(d[1]);
-            
+            this.printStatments.push({date:moment().unix(),message:"nonce generated "+d[1] });
             
 
             contract.methods.balanceOf(creating_address)
@@ -282,6 +288,7 @@ export class UserhomesinglemodelComponent implements OnInit {
             this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
             .on('transactionHash', (hash)=>{
                 // console.log(hash)
+                this.printStatments.push({date:moment().unix(),message:"successful token transfer hash:"+hash});
                 this.successmessage = tt+' tokens has been transfer to '+'<a class="alink" href="'+this.viewAddress+firstAdd+'" target="_blank">'+firstAdd+'</a> with transaction hash <a class="alink" href="'+this.viewHash+hash+'" target="_blank">'+hash+'</a>. Token confirmations may took time wait until confirmations is done by blockchain.';
               
                 let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
@@ -382,6 +389,7 @@ export class UserhomesinglemodelComponent implements OnInit {
             .on('error',(ee)=>{
               // this.ngxloading  = false;
               // console.log('error:',ee)
+              this.printStatments.push({date:moment().unix(),message:"failed token transfer "+ee.message});
               let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
                 // console.log(ddata)
                 if(ddata == null || ddata == ""){
@@ -460,6 +468,9 @@ export class UserhomesinglemodelComponent implements OnInit {
   fileEXPORTJSONDATA:any = [];
   fileEXPORTJSONDATABASE:any;
   download(type){
+    this.fileEXPORTDATA = "";
+    this.fileEXPORTJSONDATA = [];
+    this.printStatments = [];
     let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsJSON")).toString());
     if(type == "csv"){
       // console.log("type",type,data)

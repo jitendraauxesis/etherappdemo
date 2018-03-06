@@ -41,6 +41,8 @@ export class UserhomemodelComponent implements OnInit {
   successmessage:string = '';
   public ngxloading  = false;
 
+  printStatments:any = [];
+
   constructor(
     public casService:CasService,
     public snackBar: MatSnackBar,
@@ -110,7 +112,7 @@ export class UserhomemodelComponent implements OnInit {
     //   this.totalTXTokens,this.SISFeeCalc.cas,
     //   this.SISFeeCalc.individual, this.SISFeeCalc.eth
     // )
-
+    this.printStatments.push({date:moment().unix(),message:"Multiple token transfer model open"});
     // this.privatekey = "0xba100b9f412d1283a88fff1c9c7c42c70883c9a8ca1cf17c4496f5e49caa48a0";//"0xbff6ee37dd35f9adc1bb26c0dce1149468cf70f130393f2376c9ef41d0e6fa32";
   }
 
@@ -133,6 +135,7 @@ export class UserhomemodelComponent implements OnInit {
       });
     }else{
       try{ 
+        this.printStatments.push({date:moment().unix(),message:"callsubmit called"});
         let wallet = new ethers.Wallet(this.privatekey);
         // // console.log(wallet)
         let address = wallet.address;
@@ -151,6 +154,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.snackBar.open('One of token transfer failed','',{
                   duration:2000
                 });
+                this.printStatments.push({date:moment().unix(),message:"One of token transfer failed"});
                 this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);                
                 this.initialView = 2;
                 this.isSuccessinitialView = false;
@@ -158,12 +162,13 @@ export class UserhomemodelComponent implements OnInit {
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Unsuccessful transaction","Response:"+JSON.stringify(d));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
-                this.couchdblogsService.putErrorInPouch("callsubmit()","One of unsuccessful transaction ",JSON.stringify(d),"4","UserhomemodelComponent","warning");
+                this.couchdblogsService.putErrorInPouch("callsubmit()","One of unsuccessful transaction ",JSON.stringify({datas:d,stats:this.printStatments}),"4","UserhomemodelComponent","warning");
               }else if(dt.status == "success"){
                 this.ngxloading  = false;
                 this.snackBar.open('Token transfer success','',{
                   duration:2000
                 });
+                this.printStatments.push({date:moment().unix(),message:"Token transaction succeed"});
                 this.appendToRECORDS(this.fromaddress,this.totalTXTokens,dt.data);
                 this.initialView = 2;
                 this.isSuccessinitialView = true;
@@ -171,7 +176,7 @@ export class UserhomemodelComponent implements OnInit {
                 this.mycryptoService.saveToLocal("SISDistributedTokenListsCSV",JSON.stringify(dt.data));
                 // console.log(this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV"))
                 this.activityServ.putActivityInPouch("UserhomemodalComponent","callsubmit()","Successful transaction","Response:"+JSON.stringify(d));
-                this.couchdblogsService.putErrorInPouch("callsubmit()","Successful transaction ",JSON.stringify(d),"6","UserhomemodelComponent","success");
+                this.couchdblogsService.putErrorInPouch("callsubmit()","Successful transaction ",JSON.stringify({datas:d,stats:this.printStatments}),"6","UserhomemodelComponent","success");
               }else{
                 this.ngxloading  = false;
                 this.snackBar.open('Token transfer failed','',{
@@ -272,6 +277,8 @@ export class UserhomemodelComponent implements OnInit {
     // this.ngxloading  = true;
     return new Promise((resolve,reject)=>{
       try{
+        this.printStatments.push({date:moment().unix(),message:"sendToken called()"});
+        this.appendDATAHASHES = [];
         let ContractABI = this.mycryptoService.retrieveFromLocal("SISContractABI");
         let ContractAddress = this.mycryptoService.retrieveFromLocal("SISContractAddress");
         let ContractData = this.mycryptoService.retrieveFromLocal("SISContractData");
@@ -298,7 +305,7 @@ export class UserhomemodelComponent implements OnInit {
         nonce.then(
           dnonce => {
             globalnonce = dnonce;
-            
+            this.printStatments.push({date:moment().unix(),message:"Global nonce generated "+globalnonce});
             // var gasLimit = this.web3.eth.estimateGas({ 
             //   to: creating_address, // data: '0x' + bytecode, 
             //   data: ContractData, // from: wallet.address, 
@@ -311,6 +318,7 @@ export class UserhomemodelComponent implements OnInit {
                 .then(
                   (d)=>{
                     console.log("d:",d)
+                    this.printStatments.push({date:moment().unix(),message:"gasprice taken "+d[0]});
                     var key = 0;  
                     // let interva = setInterval(()=>{
                     var myLoop  = () => {           //  create a loop function
@@ -323,10 +331,10 @@ export class UserhomemodelComponent implements OnInit {
                           let value = _.nth(csvfor,key);
                           stringaddresses += value.address;  
 
-                      
+                          this.printStatments.push({date:moment().unix(),message:"*****In Loop***** "+key});
 
                     
-                          console.log("data:",key,value)
+                          // console.log("data:",key,value)
                           // // console.log(gasLimit)
                           // const nonce = this.web3.eth.getTransactionCount(creating_address);
 
@@ -381,6 +389,7 @@ export class UserhomemodelComponent implements OnInit {
                               const serializedTx = tx.serialize();
                               this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString("hex"))
                               .on('transactionHash', (hash)=>{
+                                  this.printStatments.push({date:moment().unix(),message:"Position:"+value.position+",Address:"+value.address+" Transaction hash "+hash});
                                   // console.log(hash)
                                   // this.successmessage = this.totalTXTokens+' tokens has been transfer to '+this.countTXAddresses;
                                   stringhashes += hash+',';
@@ -405,6 +414,12 @@ export class UserhomemodelComponent implements OnInit {
                                   
                                     resolve({status:"success",data:this.appendDATAHASHES});
                                   }
+
+                                  let chunk = (key+1);
+                                  // if(chunk == 50 || chunk == 100 || chunk == 150 || chunk == 200){
+                                  //   this.couchdblogsService.putErrorInPouch("sendTokens()",chunk+" Successful token transfer",JSON.stringify(this.appendDATAHASHES),"6","UserhomemodelComponent","success");
+                                  // }
+
                                   // let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV");
                                   // // console.log(ddata)
                                   // if(ddata ==null || ddata == ""){
@@ -443,6 +458,7 @@ export class UserhomemodelComponent implements OnInit {
                               .on('error',(ee)=>{
                                 // this.ngxloading  = false;
                                 // // console.log('error:',ee,JSON.stringify(ee))
+                                this.printStatments.push({date:moment().unix(),message:"Position:"+value.position+"Error:"+value.address+" Failed in transaction "+ee.message});
                                 if(ee){
                                   stringhashes += null+',';
                                   let aa = {
@@ -455,7 +471,7 @@ export class UserhomemodelComponent implements OnInit {
                                     response:ee.message
                                   };
                                   this.appendDATAHASHES.push(aa);
-                                  // this.couchdblogsService.putErrorInPouch("sendTokens()","Unsuccessful token transfer",JSON.stringify(ee),"4","UserhomemodelComponent","error");
+                                  this.couchdblogsService.putErrorInPouch("sendTokens()","Unsuccessful token transfer",ee.message,"4","UserhomemodelComponent","error");
                                   // clearInterval(interva);
                                   resolve({status:"infail",data:this.appendDATAHASHES});
                                 }
@@ -514,7 +530,7 @@ export class UserhomemodelComponent implements OnInit {
 
     // // console.log(strhash,"\n",straddr,"\n",creating_address,tt)
     let ddata = this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists");
-    // console.log(ddata)
+    console.log("appendDATAHASHES",appendDATAHASHES,appendDATAHASHES.length,this.appendDATAHASHES)
     if(ddata == null || ddata == ""){
       // console.log("no receipts")
       this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify([{
@@ -527,6 +543,7 @@ export class UserhomemodelComponent implements OnInit {
         timestamp:new Date(),
         csvData:appendDATAHASHES
       }])); 
+      this.printStatments.push({date:moment().unix(),message:"Data records appended"});
     }else{
       ddata = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
       
@@ -560,6 +577,7 @@ export class UserhomemodelComponent implements OnInit {
         });
         arr.push(distribute);
         // console.log(arr)
+        this.printStatments.push({date:moment().unix(),message:"Data records appended in else"});
         this.mycryptoService.saveToLocal("SISDistributedTokenLists",JSON.stringify(arr))
         let dd1 = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenLists")).toString());
         // console.log(dd1)
@@ -579,6 +597,9 @@ export class UserhomemodelComponent implements OnInit {
   fileEXPORTJSONDATA:any = [];
   fileEXPORTJSONDATABASE:any;
   download(type){
+    this.fileEXPORTDATA = "";
+    this.fileEXPORTJSONDATA = [];
+    this.printStatments = []; 
     let data = JSON.parse((this.mycryptoService.retrieveFromLocal("SISDistributedTokenListsCSV")).toString());
     if(type == "csv"){
       // console.log("type",type,data)

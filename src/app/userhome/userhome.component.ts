@@ -287,7 +287,7 @@ export class UserhomeComponent implements OnInit {
           }else{
             //file content available    
             // // console.log("this.csvRecords",this.csvRecords)
-            this.couchdblogsService.putErrorInPouch("fileChangeListener()","CSV file successfully read","","5","UserhomeComponent","success");
+            // this.couchdblogsService.putErrorInPouch("fileChangeListener()","CSV file successfully read","","5","UserhomeComponent","success");
             this.uploadForm.get('ufile').setValue({
               filename: file.name,
               filetype: file.type,
